@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spaceman</title>
+    <title>Spaceman - Game Astronot</title>
     <style>
         * {
             margin: 0;
@@ -151,6 +151,24 @@
             opacity: 0.7;
         }
 
+        .spaceman-arms {
+            position: absolute;
+            width: 10px;
+            height: 40px;
+            background: #ffffff;
+            top: 50px;
+            left: 0;
+            border-radius: 5px;
+            transform-origin: top center;
+            animation: swingArms 2s infinite ease-in-out;
+        }
+
+        .spaceman-arms.right {
+            left: auto;
+            right: 0;
+            animation-delay: 1s;
+        }
+
         .rocket-trail {
             position: absolute;
             bottom: 0;
@@ -160,6 +178,18 @@
             background: linear-gradient(to top, #ff9800, #ff5722, transparent);
             border-radius: 5px 5px 0 0;
             transition: height 0.3s ease;
+        }
+
+        .rocket-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ff9800;
+            border-radius: 50%;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
         }
 
         .multiplier-display {
@@ -388,6 +418,51 @@
             animation: pulse 1s infinite, float 3s infinite ease-in-out;
         }
 
+        .chart-container {
+            margin-top: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 10px;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #4fc3f7;
+            transform-origin: left center;
+        }
+
+        .chart-point {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #4fc3f7;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .explosion {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff9800, #ff5722, transparent);
+            opacity: 0;
+            z-index: 5;
+        }
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -398,6 +473,23 @@
             0% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }
             100% { transform: translateY(0px); }
+        }
+
+        @keyframes swingArms {
+            0% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+            100% { transform: rotate(-10deg); }
+        }
+
+        @keyframes rocketParticles {
+            0% { 
+                transform: translate(-50%, 0) scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(-50%, -50px) scale(0);
+                opacity: 0;
+            }
         }
 
         .stars {
@@ -443,6 +535,10 @@
                 width: 150px;
                 height: 150px;
             }
+            
+            .buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -452,7 +548,7 @@
         <div class="stars" id="stars"></div>
         
         <div class="header">
-            <h1>🚀 SPACEMAN/h1>
+            <h1>🚀 SPACEMAN</h1>
             <p>Bawa astronot Anda sejauh mungkin sebelum meledak!</p>
         </div>
         
@@ -466,7 +562,13 @@
                     <div class="spaceman-helmet">
                         <div class="spaceman-visor"></div>
                     </div>
-                    <div class="rocket-trail" id="rocketTrail"></div>
+                    <div class="spaceman-arms"></div>
+                    <div class="spaceman-arms right"></div>
+                    <div class="rocket-trail" id="rocketTrail">
+                        <div class="rocket-particle" id="rocketParticle1"></div>
+                        <div class="rocket-particle" id="rocketParticle2"></div>
+                        <div class="rocket-particle" id="rocketParticle3"></div>
+                    </div>
                 </div>
                 <div class="multiplier-display">
                     <div class="multiplier" id="multiplier">1.00x</div>
@@ -475,6 +577,7 @@
                 <div class="winning-animation" id="winAnimation">
                     <div class="win-text" id="winText">CASHOUT!</div>
                 </div>
+                <div class="explosion" id="explosion"></div>
             </div>
             
             <div class="game-status" id="gameStatus">Pasang taruhan untuk memulai petualangan luar angkasa!</div>
@@ -487,7 +590,13 @@
                     <div class="input-group">
                         <label for="betAmount">Jumlah Taruhan</label>
                         <input type="number" id="betAmount" placeholder="Masukkan jumlah taruhan" min="100" max="50000" value="1000">
-                    </div>        
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="autoCashout">Auto Cashout (x)</label>
+                        <input type="number" id="autoCashout" placeholder="Masukkan auto cashout" min="1.1" step="0.1" value="2.0">
+                    </div>
+                    
                     <div class="buttons">
                         <button class="place-bet" id="placeBet">PASANG TARUHAN</button>
                         <button class="cashout" id="cashout" disabled>CASHOUT</button>
@@ -515,9 +624,15 @@
                         </div>
                     </div>
                     
+                    <div class="chart-container">
+                        <div class="chart" id="multiplierChart">
+                            <!-- Chart will be drawn here -->
+                        </div>
+                    </div>
+                    
                     <div style="margin-top: 15px; text-align: center;">
                         <div>Total Keuntungan:</div>
-                        <div class="stat-value" id="profitLoss">$0</div>
+                        <div class="stat-value" id="profitLoss">Rp 0</div>
                     </div>
                 </div>
             </div>
@@ -541,6 +656,7 @@
                 this.isPlaying = false;
                 this.crashPoint = 0;
                 this.gameHistory = [];
+                this.multiplierHistory = [];
                 this.intervalId = null;
                 this.totalGames = 0;
                 this.wins = 0;
@@ -553,6 +669,7 @@
                 this.setupEventListeners();
                 this.createStars();
                 this.updateDisplay();
+                this.drawChart();
             }
 
             initializeElements() {
@@ -568,6 +685,15 @@
                 this.winText = document.getElementById('winText');
                 this.rocketTrail = document.getElementById('rocketTrail');
                 this.spaceman = document.querySelector('.spaceman');
+                this.explosion = document.getElementById('explosion');
+                this.multiplierChart = document.getElementById('multiplierChart');
+                
+                // Rocket particles
+                this.rocketParticles = [
+                    document.getElementById('rocketParticle1'),
+                    document.getElementById('rocketParticle2'),
+                    document.getElementById('rocketParticle3')
+                ];
                 
                 // Stats elements
                 this.totalGamesElement = document.getElementById('totalGames');
@@ -617,6 +743,13 @@
                         this.betAmountInput.value = 100;
                     }
                 });
+                
+                this.autoCashoutInput.addEventListener('input', () => {
+                    let value = parseFloat(this.autoCashoutInput.value);
+                    if (value < 1.1) {
+                        this.autoCashoutInput.value = 1.1;
+                    }
+                });
             }
 
             placeBet() {
@@ -624,7 +757,7 @@
                 const autoCashout = parseFloat(this.autoCashoutInput.value);
 
                 if (!bet || bet < 100) {
-                    this.showStatus('Taruhan minimal $100!', 'error');
+                    this.showStatus('Taruhan minimal Rp 100!', 'error');
                     return;
                 }
 
@@ -677,6 +810,7 @@
                 }
 
                 this.crashPoint = Math.round(crashPoint * 100) / 100;
+                this.multiplierHistory = [];
             }
 
             startGame() {
@@ -711,8 +845,17 @@
                     this.spacemanX = 50 + (this.currentMultiplier - 1) * 2;
                     this.rocketPower = Math.min(50, (this.currentMultiplier - 1) * 5);
                     
+                    // Record multiplier for chart
+                    if (this.multiplierHistory.length < 50) {
+                        this.multiplierHistory.push(this.currentMultiplier);
+                    } else {
+                        this.multiplierHistory.shift();
+                        this.multiplierHistory.push(this.currentMultiplier);
+                    }
+                    
                     this.updateMultiplierDisplay();
                     this.updateSpacemanPosition();
+                    this.drawChart();
 
                     // Auto cashout
                     if (this.autoCashout > 0 && this.currentMultiplier >= this.autoCashout) {
@@ -740,6 +883,7 @@
                 if (this.currentMultiplier > 10) {
                     this.spaceman.style.transform = 'scale(1.1)';
                     this.rocketTrail.style.background = 'linear-gradient(to top, #ff9800, #ff5722, #ff1744, transparent)';
+                    this.animateRocketParticles();
                 } else if (this.currentMultiplier > 5) {
                     this.spaceman.style.transform = 'scale(1.05)';
                     this.rocketTrail.style.background = 'linear-gradient(to top, #ff9800, #ff5722, transparent)';
@@ -749,19 +893,67 @@
                 }
             }
 
+            animateRocketParticles() {
+                this.rocketParticles.forEach((particle, index) => {
+                    particle.style.animation = `rocketParticles ${0.5 + index * 0.2}s infinite`;
+                });
+            }
+
+            drawChart() {
+                if (this.multiplierHistory.length === 0) return;
+                
+                // Clear chart
+                this.multiplierChart.innerHTML = '';
+                
+                const maxMultiplier = Math.max(...this.multiplierHistory, 5); // Minimum 5x for scale
+                const chartHeight = this.multiplierChart.offsetHeight;
+                const chartWidth = this.multiplierChart.offsetWidth;
+                
+                // Draw line
+                const line = document.createElement('div');
+                line.className = 'chart-line';
+                this.multiplierChart.appendChild(line);
+                
+                // Draw points
+                this.multiplierHistory.forEach((multiplier, index) => {
+                    const point = document.createElement('div');
+                    point.className = 'chart-point';
+                    
+                    const x = (index / (this.multiplierHistory.length - 1)) * chartWidth;
+                    const y = chartHeight - (multiplier / maxMultiplier) * chartHeight;
+                    
+                    point.style.left = `${x}px`;
+                    point.style.top = `${y}px`;
+                    
+                    // Color based on multiplier
+                    if (multiplier >= 10) {
+                        point.style.background = '#ffeb3b';
+                        point.style.boxShadow = '0 0 5px #ffeb3b';
+                    } else if (multiplier >= 5) {
+                        point.style.background = '#ff9800';
+                        point.style.boxShadow = '0 0 5px #ff9800';
+                    } else if (multiplier >= 2) {
+                        point.style.background = '#4fc3f7';
+                        point.style.boxShadow = '0 0 5px #4fc3f7';
+                    }
+                    
+                    this.multiplierChart.appendChild(point);
+                });
+            }
+
             cashout() {
                 if (!this.isPlaying) return;
 
                 this.isPlaying = false;
                 cancelAnimationFrame(this.intervalId);
 
-                const winAmount = this.betAmount * (this.currentMultiplier - 1);
+                const winAmount = Math.floor(this.betAmount * (this.currentMultiplier - 1));
                 this.balance += this.betAmount + winAmount;
                 this.profitLoss += winAmount;
                 this.wins++;
 
                 this.showWinAnimation(`CASHOUT ${this.currentMultiplier.toFixed(2)}x`);
-                this.showStatus(`✅ Misi sukses! Cashout pada ${this.currentMultiplier.toFixed(2)}x! +$${winAmount.toFixed(2)}`, 'success');
+                this.showStatus(`✅ Misi sukses! Cashout pada ${this.currentMultiplier.toFixed(2)}x! +Rp${winAmount.toLocaleString()}`, 'success');
                 this.addToHistory(this.currentMultiplier, true);
 
                 this.resetGame();
@@ -778,17 +970,34 @@
                 this.losses++;
 
                 // Efek ledakan
+                this.showExplosion();
                 this.spaceman.style.transform = 'scale(1.2) rotate(45deg)';
                 this.rocketTrail.style.background = 'linear-gradient(to top, #ff0000, #ff6a00, transparent)';
                 this.rocketTrail.style.height = '100px';
 
-                this.showStatus(`💥 Misi gagal! Astronot meledak pada ${this.currentMultiplier.toFixed(2)}x! -$${this.betAmount}`, 'error');
+                this.showStatus(`💥 Misi gagal! Astronot meledak pada ${this.currentMultiplier.toFixed(2)}x! -Rp${this.betAmount.toLocaleString()}`, 'error');
                 this.addToHistory(this.currentMultiplier, false);
 
                 setTimeout(() => {
                     this.resetGame();
                     this.updateStats();
                 }, 2000);
+            }
+
+            showExplosion() {
+                this.explosion.style.left = `${this.spacemanX + 40}px`;
+                this.explosion.style.bottom = '50px';
+                this.explosion.style.opacity = '0.8';
+                this.explosion.style.transform = 'scale(0)';
+                
+                setTimeout(() => {
+                    this.explosion.style.transition = 'all 0.5s';
+                    this.explosion.style.transform = 'scale(1)';
+                }, 10);
+                
+                setTimeout(() => {
+                    this.explosion.style.opacity = '0';
+                }, 500);
             }
 
             resetGame() {
@@ -851,7 +1060,11 @@
                 const winRate = this.totalGames > 0 ? (this.wins / this.totalGames) * 100 : 0;
                 this.winRateElement.textContent = winRate.toFixed(1) + '%';
                 
-                this.profitLossElement.textContent = '$' + this.profitLoss.toLocaleString();
+                const profitText = this.profitLoss >= 0 ? 
+                    `Rp ${this.profitLoss.toLocaleString()}` : 
+                    `-Rp ${Math.abs(this.profitLoss).toLocaleString()}`;
+                
+                this.profitLossElement.textContent = profitText;
                 this.profitLossElement.style.color = this.profitLoss >= 0 ? '#00e676' : '#ff3d00';
             }
 
@@ -893,4 +1106,3 @@
     </script>
 </body>
 </html>
-
