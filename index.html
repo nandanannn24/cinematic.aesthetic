@@ -1,30 +1,667 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crash Game Simulator</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Game Kembang - Crash Game Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #00ff88;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        .header p {
+            opacity: 0.8;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .multiplier-display {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #333;
+            transition: all 0.3s;
+        }
+
+        .multiplier {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 15px #00ff88;
+            transition: all 0.1s;
+        }
+
+        .crash-point {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .game-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .betting-panel, .stats-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #00ff88;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .balance {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .place-bet {
+            background: linear-gradient(to right, #00ff88, #00cc6a);
+            color: #000;
+        }
+
+        .place-bet:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .cashout {
+            background: linear-gradient(to right, #ff4444, #cc3636);
+            color: white;
+        }
+
+        .cashout:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .history-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .history-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .history-item.win {
+            background: rgba(0, 255, 136, 0.3);
+            border: 1px solid #00ff88;
+        }
+
+        .history-item.lose {
+            background: rgba(255, 68, 68, 0.3);
+            border: 1px solid #ff4444;
+        }
+
+        .game-status {
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
+            min-height: 24px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .winning-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10;
+            border-radius: 15px;
+        }
+
+        .win-text {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 20px #00ff88;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 600px) {
+            .game-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .multiplier {
+                font-size: 3rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚀 Crash Game</h1>
-        <div class="game-container">
+    <div class="game-container">
+        <div class="header">
+            <h1>🚀 GAME KEMBANG</h1>
+            <p>Pasang taruhan dan cashout sebelum kembang jatuh!</p>
+        </div>
+        
+        <div class="game-area">
             <div class="multiplier-display">
-                <span id="multiplier">1.00x</span>
+                <div class="multiplier" id="multiplier">1.00x</div>
+                <div class="crash-point" id="crashPoint">Crash: ?</div>
+                <div class="winning-animation" id="winAnimation">
+                    <div class="win-text" id="winText">WIN!</div>
+                </div>
             </div>
-            <div class="betting-section">
-                <div class="balance">Balance: $<span id="balance">10000</span></div>
-                <input type="number" id="betAmount" placeholder="Bet Amount" min="1">
-                <button id="placeBet">Place Bet</button>
-                <button id="cashout" disabled>Cashout</button>
+            
+            <div class="game-status" id="gameStatus">Pasang taruhan untuk memulai game...</div>
+            
+            <div class="game-controls">
+                <div class="betting-panel">
+                    <div class="panel-title">TARUHAN</div>
+                    <div class="balance">Saldo: $<span id="balance">10,000</span></div>
+                    
+                    <div class="input-group">
+                        <label for="betAmount">Jumlah Taruhan</label>
+                        <input type="number" id="betAmount" placeholder="Masukkan jumlah taruhan" min="1" max="10000" value="100">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="autoCashout">Auto Cashout (x)</label>
+                        <input type="number" id="autoCashout" placeholder="Contoh: 2.00" step="0.1" min="1.1" value="2.00">
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="place-bet" id="placeBet">PASANG TARUHAN</button>
+                        <button class="cashout" id="cashout" disabled>CASHOUT</button>
+                    </div>
+                </div>
+                
+                <div class="stats-panel">
+                    <div class="panel-title">STATISTIK</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div>Total Games</div>
+                            <div class="stat-value" id="totalGames">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div>Menang</div>
+                            <div class="stat-value" id="wins">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div>Kalah</div>
+                            <div class="stat-value" id="losses">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div>Win Rate</div>
+                            <div class="stat-value" id="winRate">0%</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <div>Profit/Loss:</div>
+                        <div class="stat-value" id="profitLoss">$0</div>
+                    </div>
+                </div>
             </div>
-            <div class="history">
-                <h3>History</h3>
-                <div id="historyList"></div>
+            
+            <div class="history-panel">
+                <div class="panel-title">HISTORY GAME</div>
+                <div class="history-items" id="historyList">
+                    <!-- History items will be added here -->
+                </div>
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        class CrashGame {
+            constructor() {
+                this.balance = 10000;
+                this.betAmount = 0;
+                this.autoCashout = 0;
+                this.currentMultiplier = 1.00;
+                this.isPlaying = false;
+                this.crashPoint = 0;
+                this.gameHistory = [];
+                this.intervalId = null;
+                this.totalGames = 0;
+                this.wins = 0;
+                this.losses = 0;
+                this.profitLoss = 0;
+
+                this.initializeElements();
+                this.setupEventListeners();
+                this.updateDisplay();
+            }
+
+            initializeElements() {
+                this.multiplierElement = document.getElementById('multiplier');
+                this.balanceElement = document.getElementById('balance');
+                this.betAmountInput = document.getElementById('betAmount');
+                this.autoCashoutInput = document.getElementById('autoCashout');
+                this.placeBetButton = document.getElementById('placeBet');
+                this.cashoutButton = document.getElementById('cashout');
+                this.historyList = document.getElementById('historyList');
+                this.gameStatus = document.getElementById('gameStatus');
+                this.crashPointElement = document.getElementById('crashPoint');
+                this.winAnimation = document.getElementById('winAnimation');
+                this.winText = document.getElementById('winText');
+                
+                // Stats elements
+                this.totalGamesElement = document.getElementById('totalGames');
+                this.winsElement = document.getElementById('wins');
+                this.lossesElement = document.getElementById('losses');
+                this.winRateElement = document.getElementById('winRate');
+                this.profitLossElement = document.getElementById('profitLoss');
+            }
+
+            setupEventListeners() {
+                this.placeBetButton.addEventListener('click', () => this.placeBet());
+                this.cashoutButton.addEventListener('click', () => this.cashout());
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space' && this.isPlaying) {
+                        this.cashout();
+                        e.preventDefault();
+                    }
+                    
+                    if (e.code === 'Enter' && !this.isPlaying) {
+                        this.placeBet();
+                    }
+                });
+                
+                // Input validation
+                this.betAmountInput.addEventListener('input', () => {
+                    let value = parseInt(this.betAmountInput.value);
+                    if (value > this.balance) {
+                        this.betAmountInput.value = this.balance;
+                    }
+                });
+            }
+
+            placeBet() {
+                const bet = parseInt(this.betAmountInput.value);
+                const autoCashout = parseFloat(this.autoCashoutInput.value);
+
+                if (!bet || bet <= 0) {
+                    this.showStatus('Masukkan jumlah taruhan yang valid!', 'error');
+                    return;
+                }
+
+                if (bet > this.balance) {
+                    this.showStatus('Saldo tidak cukup!', 'error');
+                    return;
+                }
+
+                if (!autoCashout || autoCashout < 1.1) {
+                    this.showStatus('Set auto cashout minimal 1.1x!', 'error');
+                    return;
+                }
+
+                this.betAmount = bet;
+                this.autoCashout = autoCashout;
+                this.balance -= bet;
+                this.isPlaying = true;
+                this.totalGames++;
+
+                this.placeBetButton.disabled = true;
+                this.cashoutButton.disabled = false;
+                this.betAmountInput.disabled = true;
+                this.autoCashoutInput.disabled = true;
+
+                this.generateCrashPoint();
+                this.startGame();
+                this.updateStats();
+            }
+
+            generateCrashPoint() {
+                // Algoritma yang lebih realistis untuk crash point
+                const random = Math.random();
+                let crashPoint;
+                
+                if (random < 0.05) {
+                    crashPoint = 1.00 + Math.random() * 0.5; // 5% crash sangat awal (1.00-1.50x)
+                } else if (random < 0.2) {
+                    crashPoint = 1.50 + Math.random() * 0.5; // 15% crash awal (1.50-2.00x)
+                } else if (random < 0.5) {
+                    crashPoint = 2.00 + Math.random() * 3.00; // 30% crash rendah (2.00-5.00x)
+                } else if (random < 0.8) {
+                    crashPoint = 5.00 + Math.random() * 5.00; // 30% crash sedang (5.00-10.00x)
+                } else if (random < 0.95) {
+                    crashPoint = 10.00 + Math.random() * 15.00; // 15% crash tinggi (10.00-25.00x)
+                } else {
+                    crashPoint = 25.00 + Math.random() * 75.00; // 5% crash sangat tinggi (25.00-100.00x)
+                }
+
+                this.crashPoint = Math.round(crashPoint * 100) / 100;
+                this.crashPointElement.textContent = `Crash: ${this.crashPoint.toFixed(2)}x`;
+            }
+
+            startGame() {
+                this.currentMultiplier = 1.00;
+                this.updateMultiplierDisplay();
+                this.showStatus('Game dimulai! Tekan SPACE untuk cashout...', 'info');
+
+                let speed = 0.02;
+                let lastUpdate = Date.now();
+                
+                const gameLoop = () => {
+                    if (!this.isPlaying) return;
+                    
+                    const now = Date.now();
+                    const delta = now - lastUpdate;
+                    lastUpdate = now;
+                    
+                    // Percepatan multiplier yang semakin lambat seiring waktu
+                    if (this.currentMultiplier > 5) speed = 0.01;
+                    if (this.currentMultiplier > 10) speed = 0.005;
+                    if (this.currentMultiplier > 20) speed = 0.002;
+                    if (this.currentMultiplier > 50) speed = 0.001;
+
+                    this.currentMultiplier += speed * (delta / 16); // Normalize to 60fps
+                    this.currentMultiplier = Math.round(this.currentMultiplier * 100) / 100;
+                    
+                    this.updateMultiplierDisplay();
+
+                    // Auto cashout
+                    if (this.autoCashout > 0 && this.currentMultiplier >= this.autoCashout) {
+                        this.cashout();
+                        return;
+                    }
+
+                    // Check crash
+                    if (this.currentMultiplier >= this.crashPoint) {
+                        this.crash();
+                        return;
+                    }
+
+                    this.intervalId = requestAnimationFrame(gameLoop);
+                };
+
+                this.intervalId = requestAnimationFrame(gameLoop);
+            }
+
+            cashout() {
+                if (!this.isPlaying) return;
+
+                this.isPlaying = false;
+                cancelAnimationFrame(this.intervalId);
+
+                const winAmount = this.betAmount * (this.currentMultiplier - 1);
+                this.balance += this.betAmount + winAmount;
+                this.profitLoss += winAmount;
+                this.wins++;
+
+                this.showWinAnimation(`CASHOUT ${this.currentMultiplier.toFixed(2)}x`);
+                this.showStatus(`✅ Cashout pada ${this.currentMultiplier.toFixed(2)}x! +$${winAmount.toFixed(2)}`, 'success');
+                this.addToHistory(this.currentMultiplier, true);
+
+                this.resetGame();
+                this.updateStats();
+            }
+
+            crash() {
+                if (!this.isPlaying) return;
+
+                this.isPlaying = false;
+                cancelAnimationFrame(this.intervalId);
+
+                this.profitLoss -= this.betAmount;
+                this.losses++;
+
+                this.showStatus(`💥 CRASH pada ${this.currentMultiplier.toFixed(2)}x! -$${this.betAmount}`, 'error');
+                this.addToHistory(this.currentMultiplier, false);
+
+                this.resetGame();
+                this.updateStats();
+            }
+
+            resetGame() {
+                this.isPlaying = false;
+                this.placeBetButton.disabled = false;
+                this.cashoutButton.disabled = true;
+                this.betAmountInput.disabled = false;
+                this.autoCashoutInput.disabled = false;
+                
+                this.updateDisplay();
+                
+                // Reset setelah 3 detik
+                setTimeout(() => {
+                    this.multiplierElement.style.color = '#00ff88';
+                    this.multiplierElement.textContent = '1.00x';
+                    this.crashPointElement.textContent = 'Crash: ?';
+                    this.showStatus('Pasang taruhan untuk memulai game...', 'info');
+                }, 3000);
+            }
+
+            updateMultiplierDisplay() {
+                this.multiplierElement.textContent = this.currentMultiplier.toFixed(2) + 'x';
+                
+                // Warna berdasarkan multiplier
+                if (this.currentMultiplier >= 10) {
+                    this.multiplierElement.style.color = '#ffaa00';
+                    this.multiplierElement.style.textShadow = '0 0 15px #ffaa00';
+                } else if (this.currentMultiplier >= 5) {
+                    this.multiplierElement.style.color = '#ff4444';
+                    this.multiplierElement.style.textShadow = '0 0 15px #ff4444';
+                } else if (this.currentMultiplier >= 2) {
+                    this.multiplierElement.style.color = '#00ff88';
+                    this.multiplierElement.style.textShadow = '0 0 15px #00ff88';
+                } else {
+                    this.multiplierElement.style.color = '#00ff88';
+                    this.multiplierElement.style.textShadow = '0 0 15px #00ff88';
+                }
+            }
+
+            showWinAnimation(message) {
+                this.winText.textContent = message;
+                this.winAnimation.style.display = 'flex';
+                
+                setTimeout(() => {
+                    this.winAnimation.style.display = 'none';
+                }, 2000);
+            }
+
+            updateDisplay() {
+                this.balanceElement.textContent = this.balance.toLocaleString();
+            }
+
+            updateStats() {
+                this.totalGamesElement.textContent = this.totalGames;
+                this.winsElement.textContent = this.wins;
+                this.lossesElement.textContent = this.losses;
+                
+                const winRate = this.totalGames > 0 ? (this.wins / this.totalGames) * 100 : 0;
+                this.winRateElement.textContent = winRate.toFixed(1) + '%';
+                
+                this.profitLossElement.textContent = '$' + this.profitLoss.toLocaleString();
+                this.profitLossElement.style.color = this.profitLoss >= 0 ? '#00ff88' : '#ff4444';
+            }
+
+            showStatus(message, type) {
+                this.gameStatus.textContent = message;
+                this.gameStatus.style.background = type === 'error' ? 'rgba(255, 68, 68, 0.3)' : 
+                                                  type === 'success' ? 'rgba(0, 255, 136, 0.3)' : 
+                                                  'rgba(0, 0, 0, 0.3)';
+                this.gameStatus.style.color = type === 'error' ? '#ff4444' : 
+                                            type === 'success' ? '#00ff88' : '#ffffff';
+            }
+
+            addToHistory(multiplier, isWin) {
+                const historyItem = document.createElement('div');
+                historyItem.className = `history-item ${isWin ? 'win' : 'lose'}`;
+                historyItem.textContent = multiplier.toFixed(2) + 'x';
+                
+                // Tambahkan ke awal daftar
+                this.historyList.insertBefore(historyItem, this.historyList.firstChild);
+                
+                // Batasi hanya 12 item terakhir
+                if (this.historyList.children.length > 12) {
+                    this.historyList.removeChild(this.historyList.lastChild);
+                }
+                
+                // Simpan dalam array untuk statistik
+                this.gameHistory.unshift({
+                    multiplier: multiplier,
+                    isWin: isWin,
+                    timestamp: new Date()
+                });
+            }
+        }
+
+        // Initialize game when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new CrashGame();
+        });
+    </script>
 </body>
 </html>
