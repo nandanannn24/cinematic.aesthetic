@@ -592,10 +592,7 @@
                         <input type="number" id="betAmount" placeholder="Masukkan jumlah taruhan" min="100" max="50000" value="1000">
                     </div>
                     
-                    <div class="input-group">
-                        <label for="autoCashout">Auto Cashout (x)</label>
-                        <input type="number" id="autoCashout" placeholder="Masukkan auto cashout" min="1.1" step="0.1" value="2.0">
-                    </div>
+                    <!-- Bagian Auto Cashout telah dihapus -->
                     
                     <div class="buttons">
                         <button class="place-bet" id="placeBet">PASANG TARUHAN</button>
@@ -651,7 +648,6 @@
             constructor() {
                 this.balance = 50000;
                 this.betAmount = 0;
-                this.autoCashout = 0;
                 this.currentMultiplier = 1.00;
                 this.isPlaying = false;
                 this.crashPoint = 0;
@@ -676,7 +672,6 @@
                 this.multiplierElement = document.getElementById('multiplier');
                 this.balanceElement = document.getElementById('balance');
                 this.betAmountInput = document.getElementById('betAmount');
-                this.autoCashoutInput = document.getElementById('autoCashout');
                 this.placeBetButton = document.getElementById('placeBet');
                 this.cashoutButton = document.getElementById('cashout');
                 this.historyList = document.getElementById('historyList');
@@ -743,18 +738,10 @@
                         this.betAmountInput.value = 100;
                     }
                 });
-                
-                this.autoCashoutInput.addEventListener('input', () => {
-                    let value = parseFloat(this.autoCashoutInput.value);
-                    if (value < 1.1) {
-                        this.autoCashoutInput.value = 1.1;
-                    }
-                });
             }
 
             placeBet() {
                 const bet = parseInt(this.betAmountInput.value);
-                const autoCashout = parseFloat(this.autoCashoutInput.value);
 
                 if (!bet || bet < 100) {
                     this.showStatus('Taruhan minimal Rp 100!', 'error');
@@ -766,13 +753,7 @@
                     return;
                 }
 
-                if (!autoCashout || autoCashout < 1.1) {
-                    this.showStatus('Set auto cashout minimal 1.1x!', 'error');
-                    return;
-                }
-
                 this.betAmount = bet;
-                this.autoCashout = autoCashout;
                 this.balance -= bet;
                 this.isPlaying = true;
                 this.totalGames++;
@@ -780,7 +761,6 @@
                 this.placeBetButton.disabled = true;
                 this.cashoutButton.disabled = false;
                 this.betAmountInput.disabled = true;
-                this.autoCashoutInput.disabled = true;
 
                 this.generateCrashPoint();
                 this.startGame();
@@ -856,12 +836,6 @@
                     this.updateMultiplierDisplay();
                     this.updateSpacemanPosition();
                     this.drawChart();
-
-                    // Auto cashout
-                    if (this.autoCashout > 0 && this.currentMultiplier >= this.autoCashout) {
-                        this.cashout();
-                        return;
-                    }
 
                     // Check crash
                     if (this.currentMultiplier >= this.crashPoint) {
@@ -1005,7 +979,6 @@
                 this.placeBetButton.disabled = false;
                 this.cashoutButton.disabled = true;
                 this.betAmountInput.disabled = false;
-                this.autoCashoutInput.disabled = false;
                 
                 this.updateDisplay();
                 
