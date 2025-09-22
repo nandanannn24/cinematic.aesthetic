@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spaceman Game Simulator</title>
+    <title>Spaceman</title>
     <style>
         * {
             margin: 0;
@@ -452,7 +452,7 @@
         <div class="stars" id="stars"></div>
         
         <div class="header">
-            <h1>🚀 SPACEMAN GAME</h1>
+            <h1>🚀 SPACEMAN/h1>
             <p>Bawa astronot Anda sejauh mungkin sebelum meledak!</p>
         </div>
         
@@ -481,19 +481,13 @@
             
             <div class="game-controls">
                 <div class="betting-panel">
-                    <div class="panel-title">KONTROL MISI</div>
-                    <div class="balance">Saldo: $<span id="balance">50,000</span></div>
+                    <div class="panel-title">Buka Taruhan</div>
+                    <div class="balance">Saldo: Rp.<span id="balance">50,000</span></div>
                     
                     <div class="input-group">
                         <label for="betAmount">Jumlah Taruhan</label>
                         <input type="number" id="betAmount" placeholder="Masukkan jumlah taruhan" min="100" max="50000" value="1000">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="autoCashout">Auto Cashout (x)</label>
-                        <input type="number" id="autoCashout" placeholder="Contoh: 2.00" step="0.1" min="1.1" value="2.00">
-                    </div>
-                    
+                    </div>        
                     <div class="buttons">
                         <button class="place-bet" id="placeBet">PASANG TARUHAN</button>
                         <button class="cashout" id="cashout" disabled>CASHOUT</button>
@@ -899,3 +893,4 @@
     </script>
 </body>
 </html>
+
