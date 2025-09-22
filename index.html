@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Kembang - Crash Game Simulator</title>
+    <title>Spaceman Game Simulator</title>
     <style>
         * {
             margin: 0;
@@ -13,78 +13,176 @@
         }
 
         body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            background: linear-gradient(135deg, #0c0c2e, #1a1a3e, #2d2d5a);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
             color: white;
+            overflow-x: hidden;
         }
 
         .game-container {
             width: 100%;
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            max-width: 900px;
+            background: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            position: relative;
+            border: 2px solid #3a3a7a;
+        }
+
+        .space-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiPjxjaXJjbGUgY3g9IjEwIiBjeT0iMTAiIHI9IjEiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4yIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+');
+            z-index: 1;
+            opacity: 0.5;
         }
 
         .header {
-            background: rgba(0, 0, 0, 0.7);
+            background: linear-gradient(to right, #1a1a5e, #2d2d8a);
             padding: 20px;
             text-align: center;
-            border-bottom: 2px solid #00ff88;
+            border-bottom: 3px solid #4a4ac4;
+            position: relative;
+            z-index: 2;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 10px;
-            color: #00ff88;
-            text-shadow: 0 0 10px #00ff88;
+            color: #4fc3f7;
+            text-shadow: 0 0 15px #4fc3f7, 0 0 30px #4fc3f7;
+            letter-spacing: 2px;
         }
 
         .header p {
             opacity: 0.8;
+            font-size: 1.1rem;
         }
 
         .game-area {
             display: flex;
             flex-direction: column;
             padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .spaceman-scene {
+            background: rgba(10, 10, 40, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+            border: 2px solid #3a3a7a;
+        }
+
+        .moon {
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: #b0b0b0;
+            border-radius: 50%;
+            box-shadow: 0 0 30px #ffffff;
+            z-index: 1;
+        }
+
+        .moon-craters {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #8a8a8a 10%, transparent 10.5%),
+                        radial-gradient(circle at 70% 20%, #8a8a8a 8%, transparent 8.5%),
+                        radial-gradient(circle at 40% 70%, #8a8a8a 12%, transparent 12.5%),
+                        radial-gradient(circle at 60% 60%, #8a8a8a 6%, transparent 6.5%);
+        }
+
+        .spaceman {
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+            width: 80px;
+            height: 120px;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+
+        .spaceman-body {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            background: #ffffff;
+            border-radius: 30px 30px 10px 10px;
+            top: 20px;
+            left: 10px;
+        }
+
+        .spaceman-helmet {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: #e0e0e0;
+            border-radius: 50%;
+            top: 0;
+            left: 5px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .spaceman-visor {
+            position: absolute;
+            width: 50px;
+            height: 30px;
+            background: #4fc3f7;
+            border-radius: 25px;
+            top: 20px;
+            left: 10px;
+            opacity: 0.7;
+        }
+
+        .rocket-trail {
+            position: absolute;
+            bottom: 0;
+            left: 35px;
+            width: 10px;
+            height: 0;
+            background: linear-gradient(to top, #ff9800, #ff5722, transparent);
+            border-radius: 5px 5px 0 0;
+            transition: height 0.3s ease;
         }
 
         .multiplier-display {
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
-            padding: 30px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid #333;
-            transition: all 0.3s;
+            z-index: 3;
         }
 
         .multiplier {
             font-size: 5rem;
             font-weight: bold;
-            color: #00ff88;
-            text-shadow: 0 0 15px #00ff88;
+            color: #4fc3f7;
+            text-shadow: 0 0 20px #4fc3f7, 0 0 40px #4fc3f7;
+            margin-bottom: 10px;
             transition: all 0.1s;
         }
 
-        .crash-point {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 0, 0, 0.3);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.9rem;
+        .multiplier-label {
+            font-size: 1.2rem;
+            opacity: 0.8;
         }
 
         .game-controls {
@@ -95,26 +193,29 @@
         }
 
         .betting-panel, .stats-panel {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(30, 30, 70, 0.8);
             border-radius: 15px;
             padding: 20px;
+            border: 1px solid #4a4ac4;
         }
 
         .panel-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-bottom: 15px;
-            color: #00ff88;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            color: #4fc3f7;
+            border-bottom: 1px solid #4a4ac4;
             padding-bottom: 10px;
+            text-align: center;
         }
 
         .balance {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
             text-align: center;
             background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
+            padding: 15px;
             border-radius: 10px;
+            border: 1px solid #4a4ac4;
         }
 
         .input-group {
@@ -123,8 +224,9 @@
 
         .input-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
+            color: #bbbbff;
         }
 
         input {
@@ -132,8 +234,16 @@
             padding: 12px;
             border: none;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
             font-size: 1rem;
+            border: 1px solid #4a4ac4;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4fc3f7;
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
         }
 
         .buttons {
@@ -144,40 +254,43 @@
 
         button {
             flex: 1;
-            padding: 12px;
+            padding: 15px;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .place-bet {
-            background: linear-gradient(to right, #00ff88, #00cc6a);
-            color: #000;
+            background: linear-gradient(to right, #00c853, #00e676);
+            color: #003314;
         }
 
         .place-bet:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 200, 83, 0.4);
         }
 
         .cashout {
-            background: linear-gradient(to right, #ff4444, #cc3636);
+            background: linear-gradient(to right, #ff3d00, #ff6d00);
             color: white;
         }
 
         .cashout:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 61, 0, 0.4);
         }
 
         button:disabled {
-            background: #666;
+            background: #555;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
+            color: #999;
         }
 
         .stats-grid {
@@ -187,59 +300,70 @@
         }
 
         .stat-item {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px;
             border-radius: 8px;
             text-align: center;
+            border: 1px solid #4a4ac4;
         }
 
         .stat-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #00ff88;
+            color: #4fc3f7;
+            margin-top: 5px;
         }
 
         .history-panel {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(30, 30, 70, 0.8);
             border-radius: 15px;
             padding: 20px;
+            border: 1px solid #4a4ac4;
         }
 
         .history-items {
             display: flex;
-            flex-wrap: wrap;
             gap: 10px;
             justify-content: center;
+            flex-wrap: wrap;
             max-height: 120px;
             overflow-y: auto;
+            padding: 10px;
         }
 
         .history-item {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 15px;
             border-radius: 20px;
             font-weight: bold;
+            min-width: 70px;
+            text-align: center;
             transition: all 0.3s;
+            border: 1px solid #4a4ac4;
         }
 
         .history-item.win {
-            background: rgba(0, 255, 136, 0.3);
-            border: 1px solid #00ff88;
+            background: rgba(0, 200, 83, 0.3);
+            border-color: #00c853;
+            color: #00e676;
         }
 
         .history-item.lose {
-            background: rgba(255, 68, 68, 0.3);
-            border: 1px solid #ff4444;
+            background: rgba(255, 61, 0, 0.3);
+            border-color: #ff3d00;
+            color: #ff6d00;
         }
 
         .game-status {
             text-align: center;
             margin: 15px 0;
             font-weight: bold;
-            min-height: 24px;
-            padding: 10px;
+            min-height: 30px;
+            padding: 12px;
             border-radius: 8px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #4a4ac4;
+            font-size: 1.1rem;
         }
 
         .winning-animation {
@@ -257,11 +381,11 @@
         }
 
         .win-text {
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: bold;
-            color: #00ff88;
-            text-shadow: 0 0 20px #00ff88;
-            animation: pulse 1s infinite;
+            color: #4fc3f7;
+            text-shadow: 0 0 20px #4fc3f7;
+            animation: pulse 1s infinite, float 3s infinite ease-in-out;
         }
 
         @keyframes pulse {
@@ -270,47 +394,99 @@
             100% { transform: scale(1); }
         }
 
-        @media (max-width: 600px) {
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+
+        @media (max-width: 768px) {
             .game-controls {
                 grid-template-columns: 1fr;
             }
             
             .multiplier {
-                font-size: 3rem;
+                font-size: 3.5rem;
             }
             
             .header h1 {
                 font-size: 2rem;
+            }
+            
+            .spaceman-scene {
+                height: 250px;
+            }
+            
+            .moon {
+                width: 150px;
+                height: 150px;
             }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
+        <div class="space-background"></div>
+        <div class="stars" id="stars"></div>
+        
         <div class="header">
-            <h1>🚀 GAME KEMBANG</h1>
-            <p>Pasang taruhan dan cashout sebelum kembang jatuh!</p>
+            <h1>🚀 SPACEMAN GAME</h1>
+            <p>Bawa astronot Anda sejauh mungkin sebelum meledak!</p>
         </div>
         
         <div class="game-area">
-            <div class="multiplier-display">
-                <div class="multiplier" id="multiplier">1.00x</div>
-                <div class="crash-point" id="crashPoint">Crash: ?</div>
+            <div class="spaceman-scene">
+                <div class="moon">
+                    <div class="moon-craters"></div>
+                </div>
+                <div class="spaceman">
+                    <div class="spaceman-body"></div>
+                    <div class="spaceman-helmet">
+                        <div class="spaceman-visor"></div>
+                    </div>
+                    <div class="rocket-trail" id="rocketTrail"></div>
+                </div>
+                <div class="multiplier-display">
+                    <div class="multiplier" id="multiplier">1.00x</div>
+                    <div class="multiplier-label">Multiplier</div>
+                </div>
                 <div class="winning-animation" id="winAnimation">
-                    <div class="win-text" id="winText">WIN!</div>
+                    <div class="win-text" id="winText">CASHOUT!</div>
                 </div>
             </div>
             
-            <div class="game-status" id="gameStatus">Pasang taruhan untuk memulai game...</div>
+            <div class="game-status" id="gameStatus">Pasang taruhan untuk memulai petualangan luar angkasa!</div>
             
             <div class="game-controls">
                 <div class="betting-panel">
-                    <div class="panel-title">TARUHAN</div>
-                    <div class="balance">Saldo: $<span id="balance">10,000</span></div>
+                    <div class="panel-title">KONTROL MISI</div>
+                    <div class="balance">Saldo: $<span id="balance">50,000</span></div>
                     
                     <div class="input-group">
                         <label for="betAmount">Jumlah Taruhan</label>
-                        <input type="number" id="betAmount" placeholder="Masukkan jumlah taruhan" min="1" max="10000" value="100">
+                        <input type="number" id="betAmount" placeholder="Masukkan jumlah taruhan" min="100" max="50000" value="1000">
                     </div>
                     
                     <div class="input-group">
@@ -325,35 +501,35 @@
                 </div>
                 
                 <div class="stats-panel">
-                    <div class="panel-title">STATISTIK</div>
+                    <div class="panel-title">STATISTIK MISI</div>
                     <div class="stats-grid">
                         <div class="stat-item">
-                            <div>Total Games</div>
+                            <div>Total Misi</div>
                             <div class="stat-value" id="totalGames">0</div>
                         </div>
                         <div class="stat-item">
-                            <div>Menang</div>
+                            <div>Misi Sukses</div>
                             <div class="stat-value" id="wins">0</div>
                         </div>
                         <div class="stat-item">
-                            <div>Kalah</div>
+                            <div>Misi Gagal</div>
                             <div class="stat-value" id="losses">0</div>
                         </div>
                         <div class="stat-item">
-                            <div>Win Rate</div>
+                            <div>Rate Sukses</div>
                             <div class="stat-value" id="winRate">0%</div>
                         </div>
                     </div>
                     
-                    <div style="margin-top: 15px;">
-                        <div>Profit/Loss:</div>
+                    <div style="margin-top: 15px; text-align: center;">
+                        <div>Total Keuntungan:</div>
                         <div class="stat-value" id="profitLoss">$0</div>
                     </div>
                 </div>
             </div>
             
             <div class="history-panel">
-                <div class="panel-title">HISTORY GAME</div>
+                <div class="panel-title">HISTORY MISI</div>
                 <div class="history-items" id="historyList">
                     <!-- History items will be added here -->
                 </div>
@@ -362,9 +538,9 @@
     </div>
 
     <script>
-        class CrashGame {
+        class SpacemanGame {
             constructor() {
-                this.balance = 10000;
+                this.balance = 50000;
                 this.betAmount = 0;
                 this.autoCashout = 0;
                 this.currentMultiplier = 1.00;
@@ -376,9 +552,12 @@
                 this.wins = 0;
                 this.losses = 0;
                 this.profitLoss = 0;
+                this.spacemanX = 50;
+                this.rocketPower = 0;
 
                 this.initializeElements();
                 this.setupEventListeners();
+                this.createStars();
                 this.updateDisplay();
             }
 
@@ -391,9 +570,10 @@
                 this.cashoutButton = document.getElementById('cashout');
                 this.historyList = document.getElementById('historyList');
                 this.gameStatus = document.getElementById('gameStatus');
-                this.crashPointElement = document.getElementById('crashPoint');
                 this.winAnimation = document.getElementById('winAnimation');
                 this.winText = document.getElementById('winText');
+                this.rocketTrail = document.getElementById('rocketTrail');
+                this.spaceman = document.querySelector('.spaceman');
                 
                 // Stats elements
                 this.totalGamesElement = document.getElementById('totalGames');
@@ -401,6 +581,20 @@
                 this.lossesElement = document.getElementById('losses');
                 this.winRateElement = document.getElementById('winRate');
                 this.profitLossElement = document.getElementById('profitLoss');
+            }
+
+            createStars() {
+                const starsContainer = document.getElementById('stars');
+                for (let i = 0; i < 100; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    star.style.width = Math.random() * 3 + 'px';
+                    star.style.height = star.style.width;
+                    star.style.left = Math.random() * 100 + '%';
+                    star.style.top = Math.random() * 100 + '%';
+                    star.style.animationDelay = Math.random() * 5 + 's';
+                    starsContainer.appendChild(star);
+                }
             }
 
             setupEventListeners() {
@@ -425,6 +619,9 @@
                     if (value > this.balance) {
                         this.betAmountInput.value = this.balance;
                     }
+                    if (value < 100) {
+                        this.betAmountInput.value = 100;
+                    }
                 });
             }
 
@@ -432,8 +629,8 @@
                 const bet = parseInt(this.betAmountInput.value);
                 const autoCashout = parseFloat(this.autoCashoutInput.value);
 
-                if (!bet || bet <= 0) {
-                    this.showStatus('Masukkan jumlah taruhan yang valid!', 'error');
+                if (!bet || bet < 100) {
+                    this.showStatus('Taruhan minimal $100!', 'error');
                     return;
                 }
 
@@ -464,32 +661,37 @@
             }
 
             generateCrashPoint() {
-                // Algoritma yang lebih realistis untuk crash point
+                // Algoritma yang mirip dengan game Spaceman asli
                 const random = Math.random();
                 let crashPoint;
                 
-                if (random < 0.05) {
-                    crashPoint = 1.00 + Math.random() * 0.5; // 5% crash sangat awal (1.00-1.50x)
-                } else if (random < 0.2) {
-                    crashPoint = 1.50 + Math.random() * 0.5; // 15% crash awal (1.50-2.00x)
-                } else if (random < 0.5) {
-                    crashPoint = 2.00 + Math.random() * 3.00; // 30% crash rendah (2.00-5.00x)
-                } else if (random < 0.8) {
-                    crashPoint = 5.00 + Math.random() * 5.00; // 30% crash sedang (5.00-10.00x)
+                // Distribusi probabilitas yang realistis
+                if (random < 0.02) {
+                    crashPoint = 1.00 + Math.random() * 0.2; // 2% crash sangat awal (1.00-1.20x)
+                } else if (random < 0.1) {
+                    crashPoint = 1.20 + Math.random() * 0.3; // 8% crash awal (1.20-1.50x)
+                } else if (random < 0.3) {
+                    crashPoint = 1.50 + Math.random() * 0.5; // 20% crash rendah (1.50-2.00x)
+                } else if (random < 0.6) {
+                    crashPoint = 2.00 + Math.random() * 3.00; // 30% crash sedang (2.00-5.00x)
+                } else if (random < 0.85) {
+                    crashPoint = 5.00 + Math.random() * 5.00; // 25% crash tinggi (5.00-10.00x)
                 } else if (random < 0.95) {
-                    crashPoint = 10.00 + Math.random() * 15.00; // 15% crash tinggi (10.00-25.00x)
+                    crashPoint = 10.00 + Math.random() * 15.00; // 10% crash sangat tinggi (10.00-25.00x)
                 } else {
-                    crashPoint = 25.00 + Math.random() * 75.00; // 5% crash sangat tinggi (25.00-100.00x)
+                    crashPoint = 25.00 + Math.random() * 75.00; // 5% crash extreme (25.00-100.00x)
                 }
 
                 this.crashPoint = Math.round(crashPoint * 100) / 100;
-                this.crashPointElement.textContent = `Crash: ${this.crashPoint.toFixed(2)}x`;
             }
 
             startGame() {
                 this.currentMultiplier = 1.00;
+                this.spacemanX = 50;
+                this.rocketPower = 0;
                 this.updateMultiplierDisplay();
-                this.showStatus('Game dimulai! Tekan SPACE untuk cashout...', 'info');
+                this.updateSpacemanPosition();
+                this.showStatus('Misi dimulai! Astronot sedang terbang... Tekan SPACE untuk cashout!', 'info');
 
                 let speed = 0.02;
                 let lastUpdate = Date.now();
@@ -502,6 +704,7 @@
                     lastUpdate = now;
                     
                     // Percepatan multiplier yang semakin lambat seiring waktu
+                    if (this.currentMultiplier > 2) speed = 0.015;
                     if (this.currentMultiplier > 5) speed = 0.01;
                     if (this.currentMultiplier > 10) speed = 0.005;
                     if (this.currentMultiplier > 20) speed = 0.002;
@@ -510,7 +713,12 @@
                     this.currentMultiplier += speed * (delta / 16); // Normalize to 60fps
                     this.currentMultiplier = Math.round(this.currentMultiplier * 100) / 100;
                     
+                    // Update posisi astronot berdasarkan multiplier
+                    this.spacemanX = 50 + (this.currentMultiplier - 1) * 2;
+                    this.rocketPower = Math.min(50, (this.currentMultiplier - 1) * 5);
+                    
                     this.updateMultiplierDisplay();
+                    this.updateSpacemanPosition();
 
                     // Auto cashout
                     if (this.autoCashout > 0 && this.currentMultiplier >= this.autoCashout) {
@@ -530,6 +738,23 @@
                 this.intervalId = requestAnimationFrame(gameLoop);
             }
 
+            updateSpacemanPosition() {
+                this.spaceman.style.left = `${this.spacemanX}px`;
+                this.rocketTrail.style.height = `${this.rocketPower}px`;
+                
+                // Efek visual berdasarkan multiplier
+                if (this.currentMultiplier > 10) {
+                    this.spaceman.style.transform = 'scale(1.1)';
+                    this.rocketTrail.style.background = 'linear-gradient(to top, #ff9800, #ff5722, #ff1744, transparent)';
+                } else if (this.currentMultiplier > 5) {
+                    this.spaceman.style.transform = 'scale(1.05)';
+                    this.rocketTrail.style.background = 'linear-gradient(to top, #ff9800, #ff5722, transparent)';
+                } else {
+                    this.spaceman.style.transform = 'scale(1)';
+                    this.rocketTrail.style.background = 'linear-gradient(to top, #ff9800, #ff5722, transparent)';
+                }
+            }
+
             cashout() {
                 if (!this.isPlaying) return;
 
@@ -542,7 +767,7 @@
                 this.wins++;
 
                 this.showWinAnimation(`CASHOUT ${this.currentMultiplier.toFixed(2)}x`);
-                this.showStatus(`✅ Cashout pada ${this.currentMultiplier.toFixed(2)}x! +$${winAmount.toFixed(2)}`, 'success');
+                this.showStatus(`✅ Misi sukses! Cashout pada ${this.currentMultiplier.toFixed(2)}x! +$${winAmount.toFixed(2)}`, 'success');
                 this.addToHistory(this.currentMultiplier, true);
 
                 this.resetGame();
@@ -558,11 +783,18 @@
                 this.profitLoss -= this.betAmount;
                 this.losses++;
 
-                this.showStatus(`💥 CRASH pada ${this.currentMultiplier.toFixed(2)}x! -$${this.betAmount}`, 'error');
+                // Efek ledakan
+                this.spaceman.style.transform = 'scale(1.2) rotate(45deg)';
+                this.rocketTrail.style.background = 'linear-gradient(to top, #ff0000, #ff6a00, transparent)';
+                this.rocketTrail.style.height = '100px';
+
+                this.showStatus(`💥 Misi gagal! Astronot meledak pada ${this.currentMultiplier.toFixed(2)}x! -$${this.betAmount}`, 'error');
                 this.addToHistory(this.currentMultiplier, false);
 
-                this.resetGame();
-                this.updateStats();
+                setTimeout(() => {
+                    this.resetGame();
+                    this.updateStats();
+                }, 2000);
             }
 
             resetGame() {
@@ -576,10 +808,12 @@
                 
                 // Reset setelah 3 detik
                 setTimeout(() => {
-                    this.multiplierElement.style.color = '#00ff88';
+                    this.multiplierElement.style.color = '#4fc3f7';
                     this.multiplierElement.textContent = '1.00x';
-                    this.crashPointElement.textContent = 'Crash: ?';
-                    this.showStatus('Pasang taruhan untuk memulai game...', 'info');
+                    this.spaceman.style.transform = 'scale(1) rotate(0deg)';
+                    this.spacemanX = 50;
+                    this.updateSpacemanPosition();
+                    this.showStatus('Pasang taruhan untuk memulai misi luar angkasa berikutnya!', 'info');
                 }, 3000);
             }
 
@@ -588,17 +822,17 @@
                 
                 // Warna berdasarkan multiplier
                 if (this.currentMultiplier >= 10) {
-                    this.multiplierElement.style.color = '#ffaa00';
-                    this.multiplierElement.style.textShadow = '0 0 15px #ffaa00';
+                    this.multiplierElement.style.color = '#ffeb3b';
+                    this.multiplierElement.style.textShadow = '0 0 20px #ffeb3b, 0 0 40px #ffeb3b';
                 } else if (this.currentMultiplier >= 5) {
-                    this.multiplierElement.style.color = '#ff4444';
-                    this.multiplierElement.style.textShadow = '0 0 15px #ff4444';
+                    this.multiplierElement.style.color = '#ff9800';
+                    this.multiplierElement.style.textShadow = '0 0 20px #ff9800, 0 0 40px #ff9800';
                 } else if (this.currentMultiplier >= 2) {
-                    this.multiplierElement.style.color = '#00ff88';
-                    this.multiplierElement.style.textShadow = '0 0 15px #00ff88';
+                    this.multiplierElement.style.color = '#4fc3f7';
+                    this.multiplierElement.style.textShadow = '0 0 20px #4fc3f7, 0 0 40px #4fc3f7';
                 } else {
-                    this.multiplierElement.style.color = '#00ff88';
-                    this.multiplierElement.style.textShadow = '0 0 15px #00ff88';
+                    this.multiplierElement.style.color = '#4fc3f7';
+                    this.multiplierElement.style.textShadow = '0 0 20px #4fc3f7, 0 0 40px #4fc3f7';
                 }
             }
 
@@ -624,16 +858,16 @@
                 this.winRateElement.textContent = winRate.toFixed(1) + '%';
                 
                 this.profitLossElement.textContent = '$' + this.profitLoss.toLocaleString();
-                this.profitLossElement.style.color = this.profitLoss >= 0 ? '#00ff88' : '#ff4444';
+                this.profitLossElement.style.color = this.profitLoss >= 0 ? '#00e676' : '#ff3d00';
             }
 
             showStatus(message, type) {
                 this.gameStatus.textContent = message;
-                this.gameStatus.style.background = type === 'error' ? 'rgba(255, 68, 68, 0.3)' : 
-                                                  type === 'success' ? 'rgba(0, 255, 136, 0.3)' : 
-                                                  'rgba(0, 0, 0, 0.3)';
-                this.gameStatus.style.color = type === 'error' ? '#ff4444' : 
-                                            type === 'success' ? '#00ff88' : '#ffffff';
+                this.gameStatus.style.background = type === 'error' ? 'rgba(255, 61, 0, 0.3)' : 
+                                                  type === 'success' ? 'rgba(0, 200, 83, 0.3)' : 
+                                                  'rgba(30, 30, 70, 0.5)';
+                this.gameStatus.style.color = type === 'error' ? '#ff6d00' : 
+                                            type === 'success' ? '#00e676' : '#4fc3f7';
             }
 
             addToHistory(multiplier, isWin) {
@@ -644,8 +878,8 @@
                 // Tambahkan ke awal daftar
                 this.historyList.insertBefore(historyItem, this.historyList.firstChild);
                 
-                // Batasi hanya 12 item terakhir
-                if (this.historyList.children.length > 12) {
+                // Batasi hanya 10 item terakhir
+                if (this.historyList.children.length > 10) {
                     this.historyList.removeChild(this.historyList.lastChild);
                 }
                 
@@ -660,7 +894,7 @@
 
         // Initialize game when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new CrashGame();
+            new SpacemanGame();
         });
     </script>
 </body>
