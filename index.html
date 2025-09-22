@@ -3,1078 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spaceman - Game Astronot</title>
+    <title>Truth or Dare: Jaksel Edition</title>
     <style>
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --accent: #ffe66d;
+            --dark: #1a1a2e;
+            --light: #f7f7f7;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background: linear-gradient(135deg, #0c0c2e, #1a1a3e, #2d2d5a);
+            background: linear-gradient(135deg, var(--dark), #16213e);
+            color: var(--light);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
-            color: white;
-            overflow-x: hidden;
         }
-
-        .game-container {
-            width: 100%;
-            max-width: 900px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-            position: relative;
-            border: 2px solid #3a3a7a;
-        }
-
-        .space-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiPjxjaXJjbGUgY3g9IjEwIiBjeT0iMTAiIHI9IjEiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4yIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+');
-            z-index: 1;
-            opacity: 0.5;
-        }
-
-        .header {
-            background: linear-gradient(to right, #1a1a5e, #2d2d8a);
-            padding: 20px;
-            text-align: center;
-            border-bottom: 3px solid #4a4ac4;
-            position: relative;
-            z-index: 2;
-        }
-
-        .header h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            color: #4fc3f7;
-            text-shadow: 0 0 15px #4fc3f7, 0 0 30px #4fc3f7;
-            letter-spacing: 2px;
-        }
-
-        .header p {
-            opacity: 0.8;
-            font-size: 1.1rem;
-        }
-
-        .game-area {
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .spaceman-scene {
-            background: rgba(10, 10, 40, 0.8);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            position: relative;
-            height: 300px;
-            overflow: hidden;
-            border: 2px solid #3a3a7a;
-        }
-
-        .moon {
-            position: absolute;
-            bottom: -50px;
-            right: -50px;
-            width: 200px;
-            height: 200px;
-            background: #b0b0b0;
-            border-radius: 50%;
-            box-shadow: 0 0 30px #ffffff;
-            z-index: 1;
-        }
-
-        .moon-craters {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #8a8a8a 10%, transparent 10.5%),
-                        radial-gradient(circle at 70% 20%, #8a8a8a 8%, transparent 8.5%),
-                        radial-gradient(circle at 40% 70%, #8a8a8a 12%, transparent 12.5%),
-                        radial-gradient(circle at 60% 60%, #8a8a8a 6%, transparent 6.5%);
-        }
-
-        .spaceman {
-            position: absolute;
-            bottom: 50px;
-            left: 50px;
-            width: 80px;
-            height: 120px;
-            z-index: 2;
-            transition: transform 0.3s ease;
-        }
-
-        .spaceman-body {
-            position: absolute;
-            width: 60px;
-            height: 80px;
-            background: #ffffff;
-            border-radius: 30px 30px 10px 10px;
-            top: 20px;
-            left: 10px;
-        }
-
-        .spaceman-helmet {
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            background: #e0e0e0;
-            border-radius: 50%;
-            top: 0;
-            left: 5px;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .spaceman-visor {
-            position: absolute;
-            width: 50px;
-            height: 30px;
-            background: #4fc3f7;
-            border-radius: 25px;
-            top: 20px;
-            left: 10px;
-            opacity: 0.7;
-        }
-
-        .spaceman-arms {
-            position: absolute;
-            width: 10px;
-            height: 40px;
-            background: #ffffff;
-            top: 50px;
-            left: 0;
-            border-radius: 5px;
-            transform-origin: top center;
-            animation: swingArms 2s infinite ease-in-out;
-        }
-
-        .spaceman-arms.right {
-            left: auto;
-            right: 0;
-            animation-delay: 1s;
-        }
-
-        .rocket-trail {
-            position: absolute;
-            bottom: 0;
-            left: 35px;
-            width: 10px;
-            height: 0;
-            background: linear-gradient(to top, #ff9800, #ff5722, transparent);
-            border-radius: 5px 5px 0 0;
-            transition: height 0.3s ease;
-        }
-
-        .rocket-particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #ff9800;
-            border-radius: 50%;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-        }
-
-        .multiplier-display {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 3;
-        }
-
-        .multiplier {
-            font-size: 5rem;
-            font-weight: bold;
-            color: #4fc3f7;
-            text-shadow: 0 0 20px #4fc3f7, 0 0 40px #4fc3f7;
-            margin-bottom: 10px;
-            transition: all 0.1s;
-        }
-
-        .multiplier-label {
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-
-        .game-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .betting-panel, .stats-panel {
-            background: rgba(30, 30, 70, 0.8);
-            border-radius: 15px;
-            padding: 20px;
-            border: 1px solid #4a4ac4;
-        }
-
-        .panel-title {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: #4fc3f7;
-            border-bottom: 1px solid #4a4ac4;
-            padding-bottom: 10px;
-            text-align: center;
-        }
-
-        .balance {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #4a4ac4;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #bbbbff;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
             background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-            border: 1px solid #4a4ac4;
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-
-        input:focus {
-            outline: none;
-            border-color: #4fc3f7;
-            box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-
-        .buttons {
+        
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            font-style: italic;
+            color: var(--accent);
+        }
+        
+        .game-section {
+            display: none;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .player-input {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
-
-        button {
+        
+        input {
             flex: 1;
-            padding: 15px;
+            padding: 12px 15px;
             border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
+            border-radius: 10px 0 0 10px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 0 10px 10px 0;
+            background: var(--primary);
+            color: white;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+        
+        .players-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .player-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 15px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .remove-player {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .game-btn {
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
-        .place-bet {
-            background: linear-gradient(to right, #00c853, #00e676);
-            color: #003314;
+        
+        .truth-btn {
+            background: var(--secondary);
         }
-
-        .place-bet:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 200, 83, 0.4);
+        
+        .dare-btn {
+            background: var(--accent);
+            color: var(--dark);
         }
-
-        .cashout {
-            background: linear-gradient(to right, #ff3d00, #ff6d00);
-            color: white;
+        
+        .random-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
         }
-
-        .cashout:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 61, 0, 0.4);
-        }
-
-        button:disabled {
-            background: #555;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-            color: #999;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .stat-item {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #4a4ac4;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #4fc3f7;
-            margin-top: 5px;
-        }
-
-        .history-panel {
-            background: rgba(30, 30, 70, 0.8);
+        
+        .result-container {
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             padding: 20px;
-            border: 1px solid #4a4ac4;
-        }
-
-        .history-items {
+            text-align: center;
+            margin-top: 20px;
+            min-height: 200px;
             display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            max-height: 120px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .history-item {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            min-width: 70px;
-            text-align: center;
-            transition: all 0.3s;
-            border: 1px solid #4a4ac4;
-        }
-
-        .history-item.win {
-            background: rgba(0, 200, 83, 0.3);
-            border-color: #00c853;
-            color: #00e676;
-        }
-
-        .history-item.lose {
-            background: rgba(255, 61, 0, 0.3);
-            border-color: #ff3d00;
-            color: #ff6d00;
-        }
-
-        .game-status {
-            text-align: center;
-            margin: 15px 0;
-            font-weight: bold;
-            min-height: 30px;
-            padding: 12px;
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #4a4ac4;
-            font-size: 1.1rem;
-        }
-
-        .winning-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 10;
-            border-radius: 15px;
         }
-
-        .win-text {
-            font-size: 4rem;
-            font-weight: bold;
-            color: #4fc3f7;
-            text-shadow: 0 0 20px #4fc3f7;
-            animation: pulse 1s infinite, float 3s infinite ease-in-out;
+        
+        .player-turn {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
         }
-
-        .chart-container {
-            margin-top: 15px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 8px;
-            padding: 10px;
-            height: 120px;
-            position: relative;
-            overflow: hidden;
+        
+        .challenge {
+            font-size: 1.3rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
         }
-
-        .chart {
-            width: 100%;
-            height: 100%;
-            position: relative;
+        
+        .next-btn {
+            background: var(--primary);
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-top: 10px;
         }
-
-        .chart-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: #4fc3f7;
-            transform-origin: left center;
-        }
-
-        .chart-point {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #4fc3f7;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .explosion {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #ff9800, #ff5722, transparent);
-            opacity: 0;
-            z-index: 5;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
-        }
-
-        @keyframes swingArms {
-            0% { transform: rotate(-10deg); }
-            50% { transform: rotate(10deg); }
-            100% { transform: rotate(-10deg); }
-        }
-
-        @keyframes rocketParticles {
-            0% { 
-                transform: translate(-50%, 0) scale(1);
-                opacity: 1;
-            }
-            100% { 
-                transform: translate(-50%, -50px) scale(0);
-                opacity: 0;
-            }
-        }
-
-        .stars {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 3s infinite;
-        }
-
-        @keyframes twinkle {
-            0% { opacity: 0.2; }
-            50% { opacity: 1; }
-            100% { opacity: 0.2; }
-        }
-
-        @media (max-width: 768px) {
-            .game-controls {
-                grid-template-columns: 1fr;
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
             }
             
-            .multiplier {
-                font-size: 3.5rem;
-            }
-            
-            .header h1 {
+            h1 {
                 font-size: 2rem;
             }
             
-            .spaceman-scene {
-                height: 250px;
-            }
-            
-            .moon {
-                width: 150px;
-                height: 150px;
-            }
-            
-            .buttons {
+            .game-controls {
                 flex-direction: column;
+            }
+            
+            .game-btn {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="space-background"></div>
-        <div class="stars" id="stars"></div>
+    <div class="container">
+        <h1>TRUTH OR DARE</h1>
+        <p class="subtitle">Jaksel Edition - Bikin Heboh Gaes!</p>
         
-        <div class="header">
-            <h1>🚀 SPACEMAN</h1>
-            <p>Bawa astronot Anda sejauh mungkin sebelum meledak!</p>
+        <div id="setup-section" class="game-section active">
+            <h2>Add Players dulu, bestie!</h2>
+            <div class="player-input">
+                <input type="text" id="player-name" placeholder="Masukin nama lo..." maxlength="15">
+                <button id="add-player">Add Player</button>
+            </div>
+            
+            <div class="players-list" id="players-container">
+                <!-- Player cards will be added here -->
+            </div>
+            
+            <button id="start-game" class="game-btn random-btn" disabled>Gaskeun Game!</button>
         </div>
         
-        <div class="game-area">
-            <div class="spaceman-scene">
-                <div class="moon">
-                    <div class="moon-craters"></div>
-                </div>
-                <div class="spaceman">
-                    <div class="spaceman-body"></div>
-                    <div class="spaceman-helmet">
-                        <div class="spaceman-visor"></div>
-                    </div>
-                    <div class="spaceman-arms"></div>
-                    <div class="spaceman-arms right"></div>
-                    <div class="rocket-trail" id="rocketTrail">
-                        <div class="rocket-particle" id="rocketParticle1"></div>
-                        <div class="rocket-particle" id="rocketParticle2"></div>
-                        <div class="rocket-particle" id="rocketParticle3"></div>
-                    </div>
-                </div>
-                <div class="multiplier-display">
-                    <div class="multiplier" id="multiplier">1.00x</div>
-                    <div class="multiplier-label">Multiplier</div>
-                </div>
-                <div class="winning-animation" id="winAnimation">
-                    <div class="win-text" id="winText">CASHOUT!</div>
-                </div>
-                <div class="explosion" id="explosion"></div>
-            </div>
-            
-            <div class="game-status" id="gameStatus">Pasang taruhan untuk memulai petualangan luar angkasa!</div>
-            
+        <div id="game-section" class="game-section">
+            <h2>Siapa yang bakal kena challenge?</h2>
             <div class="game-controls">
-                <div class="betting-panel">
-                    <div class="panel-title">Buka Taruhan</div>
-                    <div class="balance">Saldo: Rp.<span id="balance">50,000</span></div>
-                    
-                    <div class="input-group">
-                        <label for="betAmount">Jumlah Taruhan</label>
-                        <input type="number" id="betAmount" placeholder="Masukkan jumlah taruhan" min="100" max="50000" value="1000">
-                    </div>
-                    
-                    <!-- Bagian Auto Cashout telah dihapus -->
-                    
-                    <div class="buttons">
-                        <button class="place-bet" id="placeBet">PASANG TARUHAN</button>
-                        <button class="cashout" id="cashout" disabled>CASHOUT</button>
-                    </div>
-                </div>
-                
-                <div class="stats-panel">
-                    <div class="panel-title">STATISTIK MISI</div>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div>Total Misi</div>
-                            <div class="stat-value" id="totalGames">0</div>
-                        </div>
-                        <div class="stat-item">
-                            <div>Misi Sukses</div>
-                            <div class="stat-value" id="wins">0</div>
-                        </div>
-                        <div class="stat-item">
-                            <div>Misi Gagal</div>
-                            <div class="stat-value" id="losses">0</div>
-                        </div>
-                        <div class="stat-item">
-                            <div>Rate Sukses</div>
-                            <div class="stat-value" id="winRate">0%</div>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <div class="chart" id="multiplierChart">
-                            <!-- Chart will be drawn here -->
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 15px; text-align: center;">
-                        <div>Total Keuntungan:</div>
-                        <div class="stat-value" id="profitLoss">Rp 0</div>
-                    </div>
-                </div>
+                <button class="game-btn truth-btn" id="truth-button">Truth</button>
+                <button class="game-btn dare-btn" id="dare-button">Dare</button>
+                <button class="game-btn random-btn" id="random-button">Random!</button>
             </div>
             
-            <div class="history-panel">
-                <div class="panel-title">HISTORY MISI</div>
-                <div class="history-items" id="historyList">
-                    <!-- History items will be added here -->
-                </div>
+            <div class="result-container">
+                <div class="player-turn" id="current-player">Player</div>
+                <div class="challenge" id="challenge-text">Pilih Truth atau Dare dulu, bestie!</div>
+                <button class="next-btn" id="next-turn">Next Player</button>
             </div>
         </div>
     </div>
 
     <script>
-        class SpacemanGame {
-            constructor() {
-                this.balance = 50000;
-                this.betAmount = 0;
-                this.currentMultiplier = 1.00;
-                this.isPlaying = false;
-                this.crashPoint = 0;
-                this.gameHistory = [];
-                this.multiplierHistory = [];
-                this.intervalId = null;
-                this.totalGames = 0;
-                this.wins = 0;
-                this.losses = 0;
-                this.profitLoss = 0;
-                this.spacemanX = 50;
-                this.rocketPower = 0;
-
-                this.initializeElements();
-                this.setupEventListeners();
-                this.createStars();
-                this.updateDisplay();
-                this.drawChart();
-            }
-
-            initializeElements() {
-                this.multiplierElement = document.getElementById('multiplier');
-                this.balanceElement = document.getElementById('balance');
-                this.betAmountInput = document.getElementById('betAmount');
-                this.placeBetButton = document.getElementById('placeBet');
-                this.cashoutButton = document.getElementById('cashout');
-                this.historyList = document.getElementById('historyList');
-                this.gameStatus = document.getElementById('gameStatus');
-                this.winAnimation = document.getElementById('winAnimation');
-                this.winText = document.getElementById('winText');
-                this.rocketTrail = document.getElementById('rocketTrail');
-                this.spaceman = document.querySelector('.spaceman');
-                this.explosion = document.getElementById('explosion');
-                this.multiplierChart = document.getElementById('multiplierChart');
+        // Data Truth dan Dare dengan bahasa Jaksel
+        const truths = [
+            "Siapa crush lo di antara orang yang lagi main ini? Spill dong!",
+            "Pernah naksir sama temen sendiri? Ceritain dong bestie!",
+            "Apa hal paling memalukan yang pernah lo lakukan? Jangan boong ya!",
+            "Kalo lo harus delete satu app dari HP lo selamanya, apa yang bakal lo hapus?",
+            "Pernah pacaran diam-diam? Spill siapa itu!",
+            "Apa ketakutan terbesar lo yang gak pernah lo ceritain ke siapa-siapa?",
+            "Siapa yang pertama kali bikin lo sadar soal 'itu-itu-an'?",
+            "Pernah ketauan lagi nonton film dewasa sama orang tua? Ceritain dong!",
+            "Apa hal paling norak yang pernah lo beli?",
+            "Kalo lo jadi cewek/cowok selama sehari, apa yang bakal lo lakukan?",
+            "Siapa seleb yang lo stalk terus di Instagram?",
+            "Pernah ngebet banget sama seseorang sampe lo stalk medsosnya? Siapa itu?",
+            "Apa kebohongan terbesar yang pernah lo bilang ke orang tua?",
+            "Pernah ketiduran pas lagi kencan? Ceritain dong!",
+            "Hal apa yang bikin lo insecure banget? Jujur ya!"
+        ];
+        
+        const dares = [
+            "Telfon mantan lo dan bilang 'I miss you' dengan suara sedih-sedih!",
+            "Coba tiruin gaya jalan artis favorit lo sampe semua orang tau itu siapa!",
+            "Upload story Instagram pake filter bayi terus tag semua orang yang lagi main!",
+            "Nyanyi lagu anak kecil sambil joget di depan kamera, terus post di TikTok!",
+            "Chat crush lo 'Apa kabar?' pake bahasa alien yang lo buat sendiri!",
+            "Makan snack pake saos sambel dicampur kecap, terus bilang 'Enak banget sumpah!'",
+            "Tiru suara bebek selama 30 detik tanpa boleh ketawa!",
+            "Bikin video TikTok dance ala-ala tapi pake lagu slow!",
+            "Pake kaos kebalik sampe game selesai!",
+            "Upload foto masa kecil lo yang paling norak di story IG!",
+            "Telepon temen lo dan bilang 'Aku sayang kamu' dengan suara serius!",
+            "Tiruin gaya iklan skincare yang lebay banget!",
+            "Makan permen cabe atau permen kopi, pilih salah satu!",
+            "Bikin suara efek film horor selama 1 menit penuh!",
+            "Coba jadi presenter berita dengan berita yang lo karang sendiri!"
+        ];
+        
+        // Variabel game
+        let players = [];
+        let currentPlayerIndex = 0;
+        
+        // Elemen DOM
+        const playerNameInput = document.getElementById('player-name');
+        const addPlayerButton = document.getElementById('add-player');
+        const playersContainer = document.getElementById('players-container');
+        const startGameButton = document.getElementById('start-game');
+        const setupSection = document.getElementById('setup-section');
+        const gameSection = document.getElementById('game-section');
+        const truthButton = document.getElementById('truth-button');
+        const dareButton = document.getElementById('dare-button');
+        const randomButton = document.getElementById('random-button');
+        const currentPlayerElement = document.getElementById('current-player');
+        const challengeTextElement = document.getElementById('challenge-text');
+        const nextTurnButton = document.getElementById('next-turn');
+        
+        // Fungsi untuk menambah pemain
+        addPlayerButton.addEventListener('click', function() {
+            const name = playerNameInput.value.trim();
+            if (name && players.length < 10) {
+                players.push(name);
+                updatePlayersList();
+                playerNameInput.value = '';
                 
-                // Rocket particles
-                this.rocketParticles = [
-                    document.getElementById('rocketParticle1'),
-                    document.getElementById('rocketParticle2'),
-                    document.getElementById('rocketParticle3')
-                ];
-                
-                // Stats elements
-                this.totalGamesElement = document.getElementById('totalGames');
-                this.winsElement = document.getElementById('wins');
-                this.lossesElement = document.getElementById('losses');
-                this.winRateElement = document.getElementById('winRate');
-                this.profitLossElement = document.getElementById('profitLoss');
-            }
-
-            createStars() {
-                const starsContainer = document.getElementById('stars');
-                for (let i = 0; i < 100; i++) {
-                    const star = document.createElement('div');
-                    star.className = 'star';
-                    star.style.width = Math.random() * 3 + 'px';
-                    star.style.height = star.style.width;
-                    star.style.left = Math.random() * 100 + '%';
-                    star.style.top = Math.random() * 100 + '%';
-                    star.style.animationDelay = Math.random() * 5 + 's';
-                    starsContainer.appendChild(star);
+                if (players.length >= 2) {
+                    startGameButton.disabled = false;
                 }
             }
-
-            setupEventListeners() {
-                this.placeBetButton.addEventListener('click', () => this.placeBet());
-                this.cashoutButton.addEventListener('click', () => this.cashout());
-                
-                // Keyboard shortcuts
-                document.addEventListener('keydown', (e) => {
-                    if (e.code === 'Space' && this.isPlaying) {
-                        this.cashout();
-                        e.preventDefault();
-                    }
+        });
+        
+        // Fungsi untuk update daftar pemain
+        function updatePlayersList() {
+            playersContainer.innerHTML = '';
+            players.forEach((player, index) => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card';
+                playerCard.innerHTML = `
+                    <span>${player}</span>
+                    <button class="remove-player" data-index="${index}">×</button>
+                `;
+                playersContainer.appendChild(playerCard);
+            });
+            
+            // Tambah event listener untuk tombol hapus
+            document.querySelectorAll('.remove-player').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    players.splice(index, 1);
+                    updatePlayersList();
                     
-                    if (e.code === 'Enter' && !this.isPlaying) {
-                        this.placeBet();
+                    if (players.length < 2) {
+                        startGameButton.disabled = true;
                     }
                 });
-                
-                // Input validation
-                this.betAmountInput.addEventListener('input', () => {
-                    let value = parseInt(this.betAmountInput.value);
-                    if (value > this.balance) {
-                        this.betAmountInput.value = this.balance;
-                    }
-                    if (value < 100) {
-                        this.betAmountInput.value = 100;
-                    }
-                });
-            }
-
-            placeBet() {
-                const bet = parseInt(this.betAmountInput.value);
-
-                if (!bet || bet < 100) {
-                    this.showStatus('Taruhan minimal Rp 100!', 'error');
-                    return;
-                }
-
-                if (bet > this.balance) {
-                    this.showStatus('Saldo tidak cukup!', 'error');
-                    return;
-                }
-
-                this.betAmount = bet;
-                this.balance -= bet;
-                this.isPlaying = true;
-                this.totalGames++;
-
-                this.placeBetButton.disabled = true;
-                this.cashoutButton.disabled = false;
-                this.betAmountInput.disabled = true;
-
-                this.generateCrashPoint();
-                this.startGame();
-                this.updateStats();
-            }
-
-            generateCrashPoint() {
-                // Algoritma yang mirip dengan game Spaceman asli
-                const random = Math.random();
-                let crashPoint;
-                
-                // Distribusi probabilitas yang realistis
-                if (random < 0.02) {
-                    crashPoint = 1.00 + Math.random() * 0.2; // 2% crash sangat awal (1.00-1.20x)
-                } else if (random < 0.1) {
-                    crashPoint = 1.20 + Math.random() * 0.3; // 8% crash awal (1.20-1.50x)
-                } else if (random < 0.3) {
-                    crashPoint = 1.50 + Math.random() * 0.5; // 20% crash rendah (1.50-2.00x)
-                } else if (random < 0.6) {
-                    crashPoint = 2.00 + Math.random() * 3.00; // 30% crash sedang (2.00-5.00x)
-                } else if (random < 0.85) {
-                    crashPoint = 5.00 + Math.random() * 5.00; // 25% crash tinggi (5.00-10.00x)
-                } else if (random < 0.95) {
-                    crashPoint = 10.00 + Math.random() * 15.00; // 10% crash sangat tinggi (10.00-25.00x)
-                } else {
-                    crashPoint = 25.00 + Math.random() * 75.00; // 5% crash extreme (25.00-100.00x)
-                }
-
-                this.crashPoint = Math.round(crashPoint * 100) / 100;
-                this.multiplierHistory = [];
-            }
-
-            startGame() {
-                this.currentMultiplier = 1.00;
-                this.spacemanX = 50;
-                this.rocketPower = 0;
-                this.updateMultiplierDisplay();
-                this.updateSpacemanPosition();
-                this.showStatus('Misi dimulai! Astronot sedang terbang... Tekan SPACE untuk cashout!', 'info');
-
-                let speed = 0.02;
-                let lastUpdate = Date.now();
-                
-                const gameLoop = () => {
-                    if (!this.isPlaying) return;
-                    
-                    const now = Date.now();
-                    const delta = now - lastUpdate;
-                    lastUpdate = now;
-                    
-                    // Percepatan multiplier yang semakin lambat seiring waktu
-                    if (this.currentMultiplier > 2) speed = 0.015;
-                    if (this.currentMultiplier > 5) speed = 0.01;
-                    if (this.currentMultiplier > 10) speed = 0.005;
-                    if (this.currentMultiplier > 20) speed = 0.002;
-                    if (this.currentMultiplier > 50) speed = 0.001;
-
-                    this.currentMultiplier += speed * (delta / 16); // Normalize to 60fps
-                    this.currentMultiplier = Math.round(this.currentMultiplier * 100) / 100;
-                    
-                    // Update posisi astronot berdasarkan multiplier
-                    this.spacemanX = 50 + (this.currentMultiplier - 1) * 2;
-                    this.rocketPower = Math.min(50, (this.currentMultiplier - 1) * 5);
-                    
-                    // Record multiplier for chart
-                    if (this.multiplierHistory.length < 50) {
-                        this.multiplierHistory.push(this.currentMultiplier);
-                    } else {
-                        this.multiplierHistory.shift();
-                        this.multiplierHistory.push(this.currentMultiplier);
-                    }
-                    
-                    this.updateMultiplierDisplay();
-                    this.updateSpacemanPosition();
-                    this.drawChart();
-
-                    // Check crash
-                    if (this.currentMultiplier >= this.crashPoint) {
-                        this.crash();
-                        return;
-                    }
-
-                    this.intervalId = requestAnimationFrame(gameLoop);
-                };
-
-                this.intervalId = requestAnimationFrame(gameLoop);
-            }
-
-            updateSpacemanPosition() {
-                this.spaceman.style.left = `${this.spacemanX}px`;
-                this.rocketTrail.style.height = `${this.rocketPower}px`;
-                
-                // Efek visual berdasarkan multiplier
-                if (this.currentMultiplier > 10) {
-                    this.spaceman.style.transform = 'scale(1.1)';
-                    this.rocketTrail.style.background = 'linear-gradient(to top, #ff9800, #ff5722, #ff1744, transparent)';
-                    this.animateRocketParticles();
-                } else if (this.currentMultiplier > 5) {
-                    this.spaceman.style.transform = 'scale(1.05)';
-                    this.rocketTrail.style.background = 'linear-gradient(to top, #ff9800, #ff5722, transparent)';
-                } else {
-                    this.spaceman.style.transform = 'scale(1)';
-                    this.rocketTrail.style.background = 'linear-gradient(to top, #ff9800, #ff5722, transparent)';
-                }
-            }
-
-            animateRocketParticles() {
-                this.rocketParticles.forEach((particle, index) => {
-                    particle.style.animation = `rocketParticles ${0.5 + index * 0.2}s infinite`;
-                });
-            }
-
-            drawChart() {
-                if (this.multiplierHistory.length === 0) return;
-                
-                // Clear chart
-                this.multiplierChart.innerHTML = '';
-                
-                const maxMultiplier = Math.max(...this.multiplierHistory, 5); // Minimum 5x for scale
-                const chartHeight = this.multiplierChart.offsetHeight;
-                const chartWidth = this.multiplierChart.offsetWidth;
-                
-                // Draw line
-                const line = document.createElement('div');
-                line.className = 'chart-line';
-                this.multiplierChart.appendChild(line);
-                
-                // Draw points
-                this.multiplierHistory.forEach((multiplier, index) => {
-                    const point = document.createElement('div');
-                    point.className = 'chart-point';
-                    
-                    const x = (index / (this.multiplierHistory.length - 1)) * chartWidth;
-                    const y = chartHeight - (multiplier / maxMultiplier) * chartHeight;
-                    
-                    point.style.left = `${x}px`;
-                    point.style.top = `${y}px`;
-                    
-                    // Color based on multiplier
-                    if (multiplier >= 10) {
-                        point.style.background = '#ffeb3b';
-                        point.style.boxShadow = '0 0 5px #ffeb3b';
-                    } else if (multiplier >= 5) {
-                        point.style.background = '#ff9800';
-                        point.style.boxShadow = '0 0 5px #ff9800';
-                    } else if (multiplier >= 2) {
-                        point.style.background = '#4fc3f7';
-                        point.style.boxShadow = '0 0 5px #4fc3f7';
-                    }
-                    
-                    this.multiplierChart.appendChild(point);
-                });
-            }
-
-            cashout() {
-                if (!this.isPlaying) return;
-
-                this.isPlaying = false;
-                cancelAnimationFrame(this.intervalId);
-
-                const winAmount = Math.floor(this.betAmount * (this.currentMultiplier - 1));
-                this.balance += this.betAmount + winAmount;
-                this.profitLoss += winAmount;
-                this.wins++;
-
-                this.showWinAnimation(`CASHOUT ${this.currentMultiplier.toFixed(2)}x`);
-                this.showStatus(`✅ Misi sukses! Cashout pada ${this.currentMultiplier.toFixed(2)}x! +Rp${winAmount.toLocaleString()}`, 'success');
-                this.addToHistory(this.currentMultiplier, true);
-
-                this.resetGame();
-                this.updateStats();
-            }
-
-            crash() {
-                if (!this.isPlaying) return;
-
-                this.isPlaying = false;
-                cancelAnimationFrame(this.intervalId);
-
-                this.profitLoss -= this.betAmount;
-                this.losses++;
-
-                // Efek ledakan
-                this.showExplosion();
-                this.spaceman.style.transform = 'scale(1.2) rotate(45deg)';
-                this.rocketTrail.style.background = 'linear-gradient(to top, #ff0000, #ff6a00, transparent)';
-                this.rocketTrail.style.height = '100px';
-
-                this.showStatus(`💥 Misi gagal! Astronot meledak pada ${this.currentMultiplier.toFixed(2)}x! -Rp${this.betAmount.toLocaleString()}`, 'error');
-                this.addToHistory(this.currentMultiplier, false);
-
-                setTimeout(() => {
-                    this.resetGame();
-                    this.updateStats();
-                }, 2000);
-            }
-
-            showExplosion() {
-                this.explosion.style.left = `${this.spacemanX + 40}px`;
-                this.explosion.style.bottom = '50px';
-                this.explosion.style.opacity = '0.8';
-                this.explosion.style.transform = 'scale(0)';
-                
-                setTimeout(() => {
-                    this.explosion.style.transition = 'all 0.5s';
-                    this.explosion.style.transform = 'scale(1)';
-                }, 10);
-                
-                setTimeout(() => {
-                    this.explosion.style.opacity = '0';
-                }, 500);
-            }
-
-            resetGame() {
-                this.isPlaying = false;
-                this.placeBetButton.disabled = false;
-                this.cashoutButton.disabled = true;
-                this.betAmountInput.disabled = false;
-                
-                this.updateDisplay();
-                
-                // Reset setelah 3 detik
-                setTimeout(() => {
-                    this.multiplierElement.style.color = '#4fc3f7';
-                    this.multiplierElement.textContent = '1.00x';
-                    this.spaceman.style.transform = 'scale(1) rotate(0deg)';
-                    this.spacemanX = 50;
-                    this.updateSpacemanPosition();
-                    this.showStatus('Pasang taruhan untuk memulai misi luar angkasa berikutnya!', 'info');
-                }, 3000);
-            }
-
-            updateMultiplierDisplay() {
-                this.multiplierElement.textContent = this.currentMultiplier.toFixed(2) + 'x';
-                
-                // Warna berdasarkan multiplier
-                if (this.currentMultiplier >= 10) {
-                    this.multiplierElement.style.color = '#ffeb3b';
-                    this.multiplierElement.style.textShadow = '0 0 20px #ffeb3b, 0 0 40px #ffeb3b';
-                } else if (this.currentMultiplier >= 5) {
-                    this.multiplierElement.style.color = '#ff9800';
-                    this.multiplierElement.style.textShadow = '0 0 20px #ff9800, 0 0 40px #ff9800';
-                } else if (this.currentMultiplier >= 2) {
-                    this.multiplierElement.style.color = '#4fc3f7';
-                    this.multiplierElement.style.textShadow = '0 0 20px #4fc3f7, 0 0 40px #4fc3f7';
-                } else {
-                    this.multiplierElement.style.color = '#4fc3f7';
-                    this.multiplierElement.style.textShadow = '0 0 20px #4fc3f7, 0 0 40px #4fc3f7';
-                }
-            }
-
-            showWinAnimation(message) {
-                this.winText.textContent = message;
-                this.winAnimation.style.display = 'flex';
-                
-                setTimeout(() => {
-                    this.winAnimation.style.display = 'none';
-                }, 2000);
-            }
-
-            updateDisplay() {
-                this.balanceElement.textContent = this.balance.toLocaleString();
-            }
-
-            updateStats() {
-                this.totalGamesElement.textContent = this.totalGames;
-                this.winsElement.textContent = this.wins;
-                this.lossesElement.textContent = this.losses;
-                
-                const winRate = this.totalGames > 0 ? (this.wins / this.totalGames) * 100 : 0;
-                this.winRateElement.textContent = winRate.toFixed(1) + '%';
-                
-                const profitText = this.profitLoss >= 0 ? 
-                    `Rp ${this.profitLoss.toLocaleString()}` : 
-                    `-Rp ${Math.abs(this.profitLoss).toLocaleString()}`;
-                
-                this.profitLossElement.textContent = profitText;
-                this.profitLossElement.style.color = this.profitLoss >= 0 ? '#00e676' : '#ff3d00';
-            }
-
-            showStatus(message, type) {
-                this.gameStatus.textContent = message;
-                this.gameStatus.style.background = type === 'error' ? 'rgba(255, 61, 0, 0.3)' : 
-                                                  type === 'success' ? 'rgba(0, 200, 83, 0.3)' : 
-                                                  'rgba(30, 30, 70, 0.5)';
-                this.gameStatus.style.color = type === 'error' ? '#ff6d00' : 
-                                            type === 'success' ? '#00e676' : '#4fc3f7';
-            }
-
-            addToHistory(multiplier, isWin) {
-                const historyItem = document.createElement('div');
-                historyItem.className = `history-item ${isWin ? 'win' : 'lose'}`;
-                historyItem.textContent = multiplier.toFixed(2) + 'x';
-                
-                // Tambahkan ke awal daftar
-                this.historyList.insertBefore(historyItem, this.historyList.firstChild);
-                
-                // Batasi hanya 10 item terakhir
-                if (this.historyList.children.length > 10) {
-                    this.historyList.removeChild(this.historyList.lastChild);
-                }
-                
-                // Simpan dalam array untuk statistik
-                this.gameHistory.unshift({
-                    multiplier: multiplier,
-                    isWin: isWin,
-                    timestamp: new Date()
-                });
-            }
+            });
         }
-
-        // Initialize game when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            new SpacemanGame();
+        
+        // Fungsi untuk memulai game
+        startGameButton.addEventListener('click', function() {
+            if (players.length >= 2) {
+                setupSection.classList.remove('active');
+                gameSection.classList.add('active');
+                currentPlayerIndex = Math.floor(Math.random() * players.length);
+                updateCurrentPlayer();
+            }
+        });
+        
+        // Fungsi untuk update pemain saat ini
+        function updateCurrentPlayer() {
+            currentPlayerElement.textContent = `Giliran: ${players[currentPlayerIndex]}`;
+        }
+        
+        // Fungsi untuk mendapatkan truth random
+        truthButton.addEventListener('click', function() {
+            const randomTruth = truths[Math.floor(Math.random() * truths.length)];
+            challengeTextElement.textContent = randomTruth;
+        });
+        
+        // Fungsi untuk mendapatkan dare random
+        dareButton.addEventListener('click', function() {
+            const randomDare = dares[Math.floor(Math.random() * dares.length)];
+            challengeTextElement.textContent = randomDare;
+        });
+        
+        // Fungsi untuk random truth atau dare
+        randomButton.addEventListener('click', function() {
+            const isTruth = Math.random() > 0.5;
+            if (isTruth) {
+                const randomTruth = truths[Math.floor(Math.random() * truths.length)];
+                challengeTextElement.textContent = `TRUTH: ${randomTruth}`;
+            } else {
+                const randomDare = dares[Math.floor(Math.random() * dares.length)];
+                challengeTextElement.textContent = `DARE: ${randomDare}`;
+            }
+        });
+        
+        // Fungsi untuk next player
+        nextTurnButton.addEventListener('click', function() {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            updateCurrentPlayer();
+            challengeTextElement.textContent = "Pilih Truth atau Dare dulu, bestie!";
+        });
+        
+        // Enter untuk menambah pemain
+        playerNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addPlayerButton.click();
+            }
         });
     </script>
 </body>
