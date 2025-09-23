@@ -11,55 +11,98 @@ body {
   overflow: hidden;
 }
 
+.page {
+  display: none;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.page.active {
+  display: flex;
+}
+
 .container {
   text-align: center;
   background: rgba(20, 10, 40, 0.7);
-  padding: 50px;
+  padding: 40px;
   border-radius: 15px;
   box-shadow: 0 0 40px rgba(150, 0, 255, 0.6);
-  animation: fadeIn 2s ease-in-out;
 }
 
 .title {
   font-size: 3rem;
   color: #c19bf5;
-  text-shadow: 0 0 15px #d9a7ff, 0 0 30px gold;
-  animation: glow 2s infinite alternate;
+  text-shadow: 0 0 20px #d9a7ff, 0 0 40px gold;
 }
 
 .desc {
-  font-size: 1.1rem;
   margin: 20px 0;
-  color: #e6e6fa;
 }
 
 .btn {
   background: linear-gradient(90deg, #7b2ff7, #f107a3);
   color: white;
-  font-size: 1.2rem;
+  font-size: 1rem;
   padding: 12px 25px;
   border: none;
-  border-radius: 30px;
+  border-radius: 25px;
   cursor: pointer;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s;
 }
 
 .btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 30px rgba(255, 215, 0, 1);
 }
 
-@keyframes glow {
-  from {
-    text-shadow: 0 0 10px #9b59b6, 0 0 20px #9b59b6, 0 0 30px gold;
-  }
-  to {
-    text-shadow: 0 0 20px #8e44ad, 0 0 40px gold, 0 0 60px #8e44ad;
-  }
+/* Kartu Tarot */
+.card-container {
+  perspective: 1000px;
+  text-align: center;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+.card {
+  width: 250px;
+  height: 350px;
+  margin: auto;
+  perspective: 1000px;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 1s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.card-front {
+  background: linear-gradient(145deg, #2a003f, #0b001a);
+  color: #e0d4ff;
+}
+
+.card-back {
+  background: linear-gradient(145deg, #1c0030, #35004f);
+  color: gold;
+  transform: rotateY(180deg);
+  padding: 20px;
 }
