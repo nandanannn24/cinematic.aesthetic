@@ -2,45 +2,19 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Undercover Tarot</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Undercover Card Game</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="slide active" id="intro">
-    <h1 class="title">UNDERCOVER TAROT</h1>
-    <p class="desc">Permainan misterius untuk tongkrongan 18+.<br>Ungu mistis + gold glow, penuh kecurigaan.</p>
-    <button class="btn" onclick="nextSlide()">Mulai</button>
+  <h1 class="title">Game Undercover 🎭</h1>
+
+  <div class="container" id="players"></div>
+  
+  <div class="controls">
+    <button onclick="startGame()">🎲 Mulai Game</button>
+    <button onclick="nextTurn()">➡️ Next Turn</button>
   </div>
 
-  <div class="slide" id="setup">
-    <h2>Masukkan Nama Pemain</h2>
-    <input type="text" id="playerInput" placeholder="Nama pemain">
-    <button class="btn" onclick="addPlayer()">Tambah</button>
-    <ul id="playerList"></ul>
-    <button class="btn" onclick="startGame()">Mulai Game</button>
-  </div>
-
-  <div class="slide" id="game">
-    <div class="card3d" id="card">
-      <div class="front">
-        <h2>Kartu Misterius</h2>
-        <p>Klik untuk membuka</p>
-      </div>
-      <div class="back">
-        <h2 id="roleText"></h2>
-        <p id="clueText"></p>
-      </div>
-    </div>
-    <button class="btn" onclick="nextPlayer()">Next</button>
-  </div>
-
-  <div class="slide" id="end">
-    <h2>Semua kartu sudah dibuka!</h2>
-    <p>Diskusikan, curiga, dan tebak siapa Undercover & Mr. White!</p>
-    <button class="btn" onclick="restartGame()">Main Lagi</button>
-  </div>
-
-  <script src="script.js"></script>
+  <script src="ascript.js"></script>
 </body>
 </html>
