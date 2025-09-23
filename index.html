@@ -1,20 +1,1144 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Undercover Card Game</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undercover - Misteri Horror</title>
+    <style>
+        :root {
+            --primary-purple: #1a0d3a;
+            --dark-purple: #0d0521;
+            --light-purple: #3a1f7a;
+            --blood-red: #8a0303;
+            --gold: #d4af37;
+            --gold-glow: #ffd700;
+            --text-light: #f0e6ff;
+            --text-gold: #f9e076;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Creepster', cursive, 'Cinzel', 'Times New Roman', serif;
+        }
+        
+        body {
+            background: radial-gradient(circle at center, var(--dark-purple) 0%, #000000 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        h1, h2, h3 {
+            color: var(--blood-red);
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--blood-red), 0 0 20px var(--blood-red);
+            letter-spacing: 2px;
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .btn {
+            background: linear-gradient(to bottom, var(--blood-red) 0%, #5a0101 100%);
+            color: var(--text-light);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(138, 3, 3, 0.6);
+            margin: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(138, 3, 3, 0.8);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::after {
+            left: 100%;
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-gold);
+            font-size: 18px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 5px;
+            border: 2px solid var(--blood-red);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: var(--text-light);
+            font-size: 16px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 8px var(--gold-glow);
+        }
+        
+        /* Card Styles */
+        .card-container {
+            perspective: 1000px;
+            width: 320px;
+            height: 480px;
+            margin: 30px auto;
+            position: relative;
+        }
+        
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+            cursor: pointer;
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            overflow: hidden;
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--dark-purple) 100%);
+            border: 3px solid var(--blood-red);
+            box-shadow: inset 0 0 50px rgba(138, 3, 3, 0.5), 0 0 30px rgba(138, 3, 3, 0.7);
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, var(--dark-purple) 0%, #000000 100%);
+            transform: rotateY(180deg);
+            border: 3px solid var(--blood-red);
+            box-shadow: inset 0 0 50px rgba(138, 3, 3, 0.5), 0 0 30px rgba(138, 3, 3, 0.7);
+        }
+        
+        .role {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--blood-red), 0 0 20px var(--blood-red);
+            text-align: center;
+            animation: textFlicker 3s infinite alternate;
+        }
+        
+        .clue {
+            font-size: 26px;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 2px solid var(--blood-red);
+            animation: fadeInText 2s ease-in-out;
+        }
+        
+        .player-name {
+            font-size: 26px;
+            margin-bottom: 15px;
+            color: var(--text-gold);
+            text-shadow: 0 0 5px var(--gold-glow);
+        }
+        
+        .instruction {
+            text-align: center;
+            margin: 20px 0;
+            font-style: italic;
+            font-size: 18px;
+        }
+        
+        .players-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .player-item {
+            background: rgba(138, 3, 3, 0.2);
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid var(--blood-red);
+        }
+        
+        /* Decorative Elements */
+        .ghost {
+            position: absolute;
+            width: 120px;
+            height: 150px;
+            z-index: 1;
+            opacity: 0.8;
+            animation: float 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(138, 3, 3, 0.7));
+        }
+        
+        .tree {
+            position: absolute;
+            width: 150px;
+            height: 220px;
+            z-index: 1;
+            opacity: 0.7;
+            filter: brightness(0.7) drop-shadow(0 0 5px rgba(138, 3, 3, 0.5));
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInText {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        
+        @keyframes textFlicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow: 0 0 10px var(--blood-red), 0 0 20px var(--blood-red);
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+            }
+        }
+        
+        @keyframes bloodDrip {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+        
+        /* Player Progress */
+        .player-progress {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .progress-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--light-purple);
+            margin: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .progress-dot.active {
+            background-color: var(--blood-red);
+            box-shadow: 0 0 10px var(--blood-red);
+            animation: pulse 2s infinite;
+        }
+        
+        .progress-dot.completed {
+            background-color: var(--gold);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Blood Drip Effect */
+        .blood-drip {
+            position: absolute;
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom, var(--blood-red), transparent);
+            opacity: 0;
+            z-index: 5;
+        }
+        
+        /* Game Title Effect */
+        .title-container {
+            position: relative;
+            margin-bottom: 40px;
+        }
+        
+        .title-container h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .title-container h2 {
+            font-size: 24px;
+        }
+        
+        /* Next Turn Button */
+        #next-btn {
+            background: linear-gradient(to bottom, var(--gold) 0%, #b8941f 100%);
+            color: var(--dark-purple);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.6);
+        }
+        
+        #next-btn:hover {
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.8);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card-container {
+                width: 280px;
+                height: 420px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+            
+            .title-container h1 {
+                font-size: 36px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .card-container {
+                width: 250px;
+                height: 380px;
+            }
+            
+            .role {
+                font-size: 24px;
+            }
+            
+            .clue {
+                font-size: 20px;
+            }
+            
+            .title-container h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1 class="title">Game Undercover 🎭</h1>
+    <!-- Background Elements -->
+    <img src="https://raw.githubusercontent.com/nandanannn24/undercover/main/hantu.PNG" class="ghost" style="top: 10%; left: 5%;">
+    <img src="https://raw.githubusercontent.com/nandanannn24/undercover/main/hantu.PNG" class="ghost" style="top: 20%; right: 8%; animation-delay: 1s;">
+    <img src="https://raw.githubusercontent.com/nandanannn24/undercover/main/hantu.PNG" class="ghost" style="bottom: 15%; left: 12%; animation-delay: 2s;">
+    <img src="https://raw.githubusercontent.com/nandanannn24/undercover/main/pohon.PNG" class="tree" style="bottom: 0; left: 0;">
+    <img src="https://raw.githubusercontent.com/nandanannn24/undercover/main/pohon.PNG" class="tree" style="bottom: 0; right: 0;">
+    
+    <!-- Blood Drip Effects -->
+    <div id="blood-drips"></div>
+    
+    <div class="container">
+        <!-- Halaman Judul -->
+        <div id="page-title" class="page active">
+            <div class="title-container">
+                <h1>UNDERCOVER</h1>
+                <h2>Misteri Horror</h2>
+            </div>
+            <div class="instruction">
+                <p>Selamat datang di permainan Undercover yang penuh misteri dan teror!</p>
+                <p>Temukan siapa yang menjadi Mr. White dan Undercover sebelum mereka mengacaukan permainan.</p>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="btn" onclick="showPage('page-setup')">MULAI PERMAINAN</button>
+            </div>
+        </div>
+        
+        <!-- Halaman Pengaturan -->
+        <div id="page-setup" class="page">
+            <h2>Pengaturan Permainan</h2>
+            <div class="input-group">
+                <label for="total-players">Jumlah Pemain (3-10):</label>
+                <input type="number" id="total-players" min="3" max="10" value="5">
+            </div>
+            <div class="input-group">
+                <label for="mr-white-count">Jumlah Mr. White (0-2):</label>
+                <input type="number" id="mr-white-count" min="0" max="2" value="1">
+            </div>
+            <div class="input-group">
+                <label for="undercover-count">Jumlah Undercover (1-3):</label>
+                <input type="number" id="undercover-count" min="1" max="3" value="1">
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="saveSettings()">SIMPAN PENGATURAN</button>
+            </div>
+        </div>
+        
+        <!-- Halaman Input Nama Pemain -->
+        <div id="page-players" class="page">
+            <h2>Masukkan Nama Pemain</h2>
+            <div id="players-input-container"></div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="savePlayers()">SIMPAN NAMA PEMAIN</button>
+            </div>
+        </div>
+        
+        <!-- Halaman Pengumuman Peran -->
+        <div id="page-announce" class="page">
+            <h2>Peran Telah Dibagikan!</h2>
+            <div class="instruction">
+                <p>Giliran setiap pemain untuk melihat kartu mereka.</p>
+                <p>Kartu tidak dapat dibuka kembali setelah ditutup!</p>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="startCardReveal()">MULAI PEMBUKAAN KARTU</button>
+            </div>
+        </div>
+        
+        <!-- Halaman Pembukaan Kartu -->
+        <div id="page-card" class="page">
+            <h2 id="current-player-name">Pemain: </h2>
+            <div class="player-progress" id="player-progress"></div>
+            <div class="card-container">
+                <div class="card" id="card">
+                    <div class="card-face card-front">
+                        <h3>KARTU UNDERCOVER</h3>
+                        <div class="player-name" id="front-player-name"></div>
+                        <p class="instruction">Klik untuk membuka kartu Anda</p>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="player-name" id="card-player-name"></div>
+                        <div class="role" id="card-role"></div>
+                        <div class="clue" id="card-clue"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" id="next-btn" onclick="nextPlayer()" style="display: none;">NEXT TURN</button>
+            </div>
+        </div>
+        
+        <!-- Halaman Permainan Dimulai -->
+        <div id="page-game" class="page">
+            <h2>Permainan Dimulai!</h2>
+            <div class="instruction">
+                <p>Sekarang saatnya berdiskusi dan mencari tahu siapa Mr. White dan Undercover!</p>
+            </div>
+            <h3>Daftar Pemain:</h3>
+            <div class="players-list" id="players-list"></div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="resetGame()">MULAI PERMAINAN BARU</button>
+            </div>
+        </div>
+    </div>
 
-  <div class="container" id="players"></div>
-  
-  <div class="controls">
-    <button onclick="startGame()">🎲 Mulai Game</button>
-    <button onclick="nextTurn()">➡️ Next Turn</button>
-  </div>
-
-  <script src="ascript.js"></script>
+    <script>
+        // Data permainan
+        let gameData = {
+            players: [],
+            roles: [],
+            currentPlayerIndex: 0,
+            civilClue: "",
+            undercoverClue: "",
+            cardOpened: false
+        };
+        
+        // Daftar clue (1000+ kata)
+        const cluePairs = [
+            { civil: "Gunung", undercover: "Merapi" },
+            { civil: "Laut", undercover: "Samudra" },
+            { civil: "Hutan", undercover: "Rimba" },
+            { civil: "Kota", undercover: "Metropolis" },
+            { civil: "Desa", undercover: "Kampung" },
+            { civil: "Mobil", undercover: "Otomotif" },
+            { civil: "Pesawat", undercover: "Terbang" },
+            { civil: "Kapal", undercover: "Perahu" },
+            { civil: "Sepatu", undercover: "Sandal" },
+            { civil: "Baju", undercover: "Pakaian" },
+            { civil: "Makan", undercover: "Santap" },
+            { civil: "Minum", undercover: "Teguk" },
+            { civil: "Tidur", undercover: "Beristirahat" },
+            { civil: "Bekerja", undercover: "Berkarya" },
+            { civil: "Belajar", undercover: "Menimba ilmu" },
+            { civil: "Bermain", undercover: "Bersenang-senang" },
+            { civil: "Menari", undercover: "Bergoyang" },
+            { civil: "Menyanyi", undercover: "Berdendang" },
+            { civil: "Bicara", undercover: "Berbincang" },
+            { civil: "Diam", undercover: "Bungkam" },
+            { civil: "Buku", undercover: "Literatur" },
+            { civil: "Pena", undercover: "Bolpoin" },
+            { civil: "Kertas", undercover: "Dokumen" },
+            { civil: "Komputer", undercover: "Laptop" },
+            { civil: "Telepon", undercover: "Smartphone" },
+            { civil: "Televisi", undercover: "TV" },
+            { civil: "Radio", undercover: "Pemancar" },
+            { civil: "Musik", undercover: "Lagu" },
+            { civil: "Film", undercover: "Sinema" },
+            { civil: "Foto", undercover: "Gambar" },
+            { civil: "Lukisan", undercover: "Karya seni" },
+            { civil: "Patung", undercover: "Arca" },
+            { civil: "Taman", undercover: "Kebun" },
+            { civil: "Bunga", undercover: "Floral" },
+            { civil: "Pohon", undercover: "Tanaman" },
+            { civil: "Hewan", undercover: "Fauna" },
+            { civil: "Kucing", undercover: "Meong" },
+            { civil: "Anjing", undercover: "Gukguk" },
+            { civil: "Burung", undercover: "Unggas" },
+            { civil: "Ikan", undercover: "Aquatik" },
+            { civil: "Api", undercover: "Kobaran" },
+            { civil: "Air", undercover: "Cairan" },
+            { civil: "Udara", undercover: "Atmosfer" },
+            { civil: "Tanah", undercover: "Bumi" },
+            { civil: "Matahari", undercover: "Surya" },
+            { civil: "Bulan", undercover: "Candra" },
+            { civil: "Bintang", undercover: "Benda langit" },
+            { civil: "Hujan", undercover: "Presipitasi" },
+            { civil: "Salju", undercover: "Es" },
+            { civil: "Angin", undercover: "Bayu" },
+            { civil: "Petir", undercover: "Kilat" },
+            { civil: "Pelangi", undercover: "Bianglala" },
+            { civil: "Awan", undercover: "Mendung" },
+            { civil: "Kabut", undercover: "Halimun" },
+            { civil: "Sungai", undercover: "Kali" },
+            { civil: "Danau", undercover: "Telaga" },
+            { civil: "Pantai", undercover: "Pesisir" },
+            { civil: "Pulau", undercover: "Kepulauan" },
+            { civil: "Benua", undercover: "Kontinen" },
+            { civil: "Negara", undercover: "Bangsa" },
+            { civil: "Kota", undercover: "Urban" },
+            { civil: "Desa", undercover: "Rural" },
+            { civil: "Jalan", undercover: "Jalur" },
+            { civil: "Jembatan", undercover: "Penyeberangan" },
+            { civil: "Gedung", undercover: "Bangunan" },
+            { civil: "Rumah", undercover: "Kediaman" },
+            { civil: "Kamar", undercover: "Ruang" },
+            { civil: "Pintu", undercover: "Gerbang" },
+            { civil: "Jendela", undercover: "Ventilasi" },
+            { civil: "Atap", undercover: "Penutup" },
+            { civil: "Dinding", undercover: "Tembok" },
+            { civil: "Lantai", undercover: "Dasar" },
+            { civil: "Meja", undercover: "Permukaan" },
+            { civil: "Kursi", undercover: "Tempat duduk" },
+            { civil: "Tempat tidur", undercover: "Kasur" },
+            { civil: "Lemari", undercover: "Kabinet" },
+            { civil: "Lampu", undercover: "Penerangan" },
+            { civil: "Listrik", undercover: "Energi" },
+            { civil: "Api", undercover: "Nyala" },
+            { civil: "Air", undercover: "H2O" },
+            { civil: "Makanan", undercover: "Sajian" },
+            { civil: "Minuman", undercover: "Hidangan" },
+            { civil: "Nasi", undercover: "Beras" },
+            { civil: "Roti", undercover: "Gandum" },
+            { civil: "Daging", undercover: "Protein" },
+            { civil: "Sayur", undercover: "Vegetasi" },
+            { civil: "Buah", undercover: "Fruktosa" },
+            { civil: "Susu", undercover: "Dairy" },
+            { civil: "Kopi", undercover: "Kafein" },
+            { civil: "Teh", undercover: "Tehina" },
+            { civil: "Gula", undercover: "Glukosa" },
+            { civil: "Garam", undercover: "Natrium" },
+            { civil: "Merica", undercover: "Lada" },
+            { civil: "Bumbu", undercover: "Rempah" },
+            { civil: "Masak", undercover: "Memasak" },
+            { civil: "Makan", undercover: "Menyantap" },
+            { civil: "Minum", undercover: "Meneguk" },
+            { civil: "Tidur", undercover: "Berleha" },
+            { civil: "Bangun", undercover: "Terjaga" },
+            { civil: "Mandiri", undercover: "Otonom" },
+            { civil: "Mandiri", undercover: "Swadaya" },
+            { civil: "Bersama", undercover: "Kolektif" },
+            { civil: "Sendiri", undercover: "Soliter" },
+            { civil: "Kelompok", undercover: "Komunitas" },
+            { civil: "Individu", undercover: "Personal" },
+            { civil: "Keluarga", undercover: "Rumah tangga" },
+            { civil: "Teman", undercover: "Sahabat" },
+            { civil: "Musuh", undercover: "Lawan" },
+            { civil: "Cinta", undercover: "Kasih sayang" },
+            { civil: "Benci", undercover: "Dendam" },
+            { civil: "Senang", undercover: "Gembira" },
+            { civil: "Sedih", undercover: "Duka" },
+            { civil: "Marah", undercover: "Geram" },
+            { civil: "Takut", undercover: "Cemas" },
+            { civil: "Tenang", undercover: "Hening" },
+            { civil: "Gelisah", undercover: "Resah" },
+            { civil: "Percaya", undercover: "Yakin" },
+            { civil: "Ragu", undercover: "Bimbang" },
+            { civil: "Harap", undercover: "Ekspektasi" },
+            { civil: "Putus asa", undercover: "Frustasi" },
+            { civil: "Sukses", undercover: "Berhasil" },
+            { civil: "Gagal", undercover: "Tidak berhasil" },
+            { civil: "Kaya", undercover: "Makmur" },
+            { civil: "Miskin", undercover: "Fakir" },
+            { civil: "Sehat", undercover: "Bugar" },
+            { civil: "Sakit", undercover: "Tidak sehat" },
+            { civil: "Muda", undercover: "Remaja" },
+            { civil: "Tua", undercover: "Lansia" },
+            { civil: "Anak-anak", undercover: "Bocah" },
+            { civil: "Dewasa", undercover: "Matang" },
+            { civil: "Pria", undercover: "Laki-laki" },
+            { civil: "Wanita", undercover: "Perempuan" },
+            { civil: "Bayi", undercover: "Balita" },
+            { civil: "Orang tua", undercover: "Senior" },
+            { civil: "Kakek", undercover: "Kakek-nenek" },
+            { civil: "Nenek", undercover: "Oma" },
+            { civil: "Cucu", undercover: "Generasi" },
+            { civil: "Saudara", undercover: "Sibling" },
+            { civil: "Ibu", undercover: "Mama" },
+            { civil: "Ayah", undercover: "Papa" },
+            { civil: "Anak", undercover: "Buah hati" },
+            { civil: "Kepala", undercover: "Otak" },
+            { civil: "Mata", undercover: "Penglihatan" },
+            { civil: "Telinga", undercover: "Pendengaran" },
+            { civil: "Hidung", undercover: "Penciuman" },
+            { civil: "Mulut", undercover: "Oral" },
+            { civil: "Tangan", undercover: "Lengan" },
+            { civil: "Kaki", undercover: "Tungkai" },
+            { civil: "Jantung", undercover: "Kardiak" },
+            { civil: "Paru-paru", undercover: "Respirasi" },
+            { civil: "Otak", undercover: "Cerebral" },
+            { civil: "Darah", undercover: "Hematologi" },
+            { civil: "Tulang", undercover: "Skeletal" },
+            { civil: "Kulit", undercover: "Dermal" },
+            { civil: "Rambut", undercover: "Folikel" },
+            { civil: "Kuku", undercover: "Keratin" },
+            { civil: "Gigi", undercover: "Dental" },
+            { civil: "Lidah", undercover: "Gustatori" },
+            { civil: "Leher", undercover: "Servikal" },
+            { civil: "Punggung", undercover: "Dorsal" },
+            { civil: "Perut", undercover: "Abdominal" },
+            { civil: "Dada", undercover: "Thoraks" },
+            { civil: "Pinggang", undercover: "Waist" },
+            { civil: "Pinggul", undercover: "Hip" },
+            { civil: "Paha", undercover: "Femur" },
+            { civil: "Lutut", undercover: "Patella" },
+            { civil: "Betis", undercover: "Calf" },
+            { civil: "Pergelangan", undercover: "Pergelangan kaki" },
+            { civil: "Jari", undercover: "Digit" },
+            { civil: "Ibu jari", undercover: "Thumb" },
+            { civil: "Telapak", undercover: "Palmar" },
+            { civil: "Tumit", undercover: "Heel" },
+            { civil: "Pundak", undercover: "Shoulder" },
+            { civil: "Siku", undercover: "Elbow" },
+            { civil: "Pergelangan tangan", undercover: "Wrist" },
+            { civil: "Pipi", undercover: "Cheek" },
+            { civil: "Dagu", undercover: "Chin" },
+            { civil: "Alis", undercover: "Eyebrow" },
+            { civil: "Bulu mata", undercover: "Eyelash" },
+            { civil: "Bibir", undercover: "Lip" },
+            { civil: "Gusi", undercover: "Gingiva" },
+            { civil: "Lidah", undercover: "Tongue" },
+            { civil: "Tenggorokan", undercover: "Throat" },
+            { civil: "Kerongkongan", undercover: "Esophagus" },
+            { civil: "Lambung", undercover: "Stomach" },
+            { civil: "Usus", undercover: "Intestine" },
+            { civil: "Hati", undercover: "Liver" },
+            { civil: "Ginjal", undercover: "Kidney" },
+            { civil: "Empedu", undercover: "Gallbladder" },
+            { civil: "Pankreas", undercover: "Pancreas" },
+            { civil: "Limpa", undercover: "Spleen" },
+            { civil: "Kandung kemih", undercover: "Bladder" },
+            { civil: "Prostat", undercover: "Prostate" },
+            { civil: "Rahim", undercover: "Uterus" },
+            { civil: "Ovarium", undercover: "Ovary" },
+            { civil: "Testis", undercover: "Testicle" },
+            { civil: "Payudara", undercover: "Breast" },
+            { civil: "Penis", undercover: "Phallus" },
+            { civil: "Vagina", undercover: "Vulva" },
+            { civil: "Anus", undercover: "Anal" },
+            { civil: "Pembuluh darah", undercover: "Vessel" },
+            { civil: "Saraf", undercover: "Nerve" },
+            { civil: "Otot", undercover: "Muscle" },
+            { civil: "Sendi", undercover: "Joint" },
+            { civil: "Ligamen", undercover: "Ligament" },
+            { civil: "Tendon", undercover: "Tendon" },
+            { civil: "Cartilage", undercover: "Tulang rawan" },
+            { civil: "Sumsum", undercover: "Marrow" },
+            { civil: "Plasma", undercover: "Plasma darah" },
+            { civil: "Sel", undercover: "Cell" },
+            { civil: "DNA", undercover: "Gen" },
+            { civil: "RNA", undercover: "Ribonukleat" },
+            { civil: "Protein", undercover: "Amino acid" },
+            { civil: "Karbohidrat", undercover: "Carb" },
+            { civil: "Lemak", undercover: "Lipid" },
+            { civil: "Vitamin", undercover: "Nutrisi" },
+            { civil: "Mineral", undercover: "Elemen" },
+            { civil: "Air", undercover: "H2O" },
+            { civil: "Oksigen", undercover: "O2" },
+            { civil: "Karbon dioksida", undercover: "CO2" },
+            { civil: "Nitrogen", undercover: "N2" },
+            { civil: "Hidrogen", undercover: "H2" },
+            { civil: "Helium", undercover: "He" },
+            { civil: "Neon", undercover: "Ne" },
+            { civil: "Argon", undercover: "Ar" },
+            { civil: "Kripton", undercover: "Kr" },
+            { civil: "Xenon", undercover: "Xe" },
+            { civil: "Radon", undercover: "Rn" },
+            { civil: "Uranium", undercover: "U" },
+            { civil: "Plutonium", undercover: "Pu" },
+            { civil: "Thorium", undercover: "Th" },
+            { civil: "Radium", undercover: "Ra" },
+            { civil: "Polonium", undercover: "Po" },
+            { civil: "Astat", undercover: "At" },
+            { civil: "Francium", undercover: "Fr" },
+            { civil: "Radon", undercover: "Rn" },
+            { civil: "Aktinium", undercover: "Ac" },
+            { civil: "Protaktinium", undercover: "Pa" },
+            { civil: "Neptunium", undercover: "Np" },
+            { civil: "Amerisium", undercover: "Am" },
+            { civil: "Curium", undercover: "Cm" },
+            { civil: "Berkelium", undercover: "Bk" },
+            { civil: "Kalifornium", undercover: "Cf" },
+            { civil: "Einsteinium", undercover: "Es" },
+            { civil: "Fermium", undercover: "Fm" },
+            { civil: "Mendelevium", undercover: "Md" },
+            { civil: "Nobelium", undercover: "No" },
+            { civil: "Lawrensium", undercover: "Lr" },
+            { civil: "Rutherfordium", undercover: "Rf" },
+            { civil: "Dubnium", undercover: "Db" },
+            { civil: "Seaborgium", undercover: "Sg" },
+            { civil: "Bohrium", undercover: "Bh" },
+            { civil: "Hassium", undercover: "Hs" },
+            { civil: "Meitnerium", undercover: "Mt" },
+            { civil: "Darmstadtium", undercover: "Ds" },
+            { civil: "Roentgenium", undercover: "Rg" },
+            { civil: "Copernicium", undercover: "Cn" },
+            { civil: "Nihonium", undercover: "Nh" },
+            { civil: "Flerovium", undercover: "Fl" },
+            { civil: "Moscovium", undercover: "Mc" },
+            { civil: "Livermorium", undercover: "Lv" },
+            { civil: "Tennessine", undercover: "Ts" },
+            { civil: "Oganesson", undercover: "Og" },
+            { civil: "Lithium", undercover: "Li" },
+            { civil: "Beryllium", undercover: "Be" },
+            { civil: "Boron", undercover: "B" },
+            { civil: "Carbon", undercover: "C" },
+            { civil: "Nitrogen", undercover: "N" },
+            { civil: "Oxygen", undercover: "O" },
+            { civil: "Fluorine", undercover: "F" },
+            { civil: "Sodium", undercover: "Na" },
+            { civil: "Magnesium", undercover: "Mg" },
+            { civil: "Aluminum", undercover: "Al" },
+            { civil: "Silicon", undercover: "Si" },
+            { civil: "Phosphorus", undercover: "P" },
+            { civil: "Sulfur", undercover: "S" },
+            { civil: "Chlorine", undercover: "Cl" },
+            { civil: "Potassium", undercover: "K" },
+            { civil: "Calcium", undercover: "Ca" },
+            { civil: "Scandium", undercover: "Sc" },
+            { civil: "Titanium", undercover: "Ti" },
+            { civil: "Vanadium", undercover: "V" },
+            { civil: "Chromium", undercover: "Cr" },
+            { civil: "Manganese", undercover: "Mn" },
+            { civil: "Iron", undercover: "Fe" },
+            { civil: "Cobalt", undercover: "Co" },
+            { civil: "Nickel", undercover: "Ni" },
+            { civil: "Copper", undercover: "Cu" },
+            { civil: "Zinc", undercover: "Zn" },
+            { civil: "Gallium", undercover: "Ga" },
+            { civil: "Germanium", undercover: "Ge" },
+            { civil: "Arsenic", undercover: "As" },
+            { civil: "Selenium", undercover: "Se" },
+            { civil: "Bromine", undercover: "Br" },
+            { civil: "Krypton", undercover: "Kr" },
+            { civil: "Rubidium", undercover: "Rb" },
+            { civil: "Strontium", undercover: "Sr" },
+            { civil: "Yttrium", undercover: "Y" },
+            { civil: "Zirconium", undercover: "Zr" },
+            { civil: "Niobium", undercover: "Nb" },
+            { civil: "Molybdenum", undercover: "Mo" },
+            { civil: "Technetium", undercover: "Tc" },
+            { civil: "Ruthenium", undercover: "Ru" },
+            { civil: "Rhodium", undercover: "Rh" },
+            { civil: "Palladium", undercover: "Pd" },
+            { civil: "Silver", undercover: "Ag" },
+            { civil: "Cadmium", undercover: "Cd" },
+            { civil: "Indium", undercover: "In" },
+            { civil: "Tin", undercover: "Sn" },
+            { civil: "Antimony", undercover: "Sb" },
+            { civil: "Tellurium", undercover: "Te" },
+            { civil: "Iodine", undercover: "I" },
+            { civil: "Xenon", undercover: "Xe" },
+            { civil: "Cesium", undercover: "Cs" },
+            { civil: "Barium", undercover: "Ba" },
+            { civil: "Lanthanum", undercover: "La" },
+            { civil: "Cerium", undercover: "Ce" },
+            { civil: "Praseodymium", undercover: "Pr" },
+            { civil: "Neodymium", undercover: "Nd" },
+            { civil: "Promethium", undercover: "Pm" },
+            { civil: "Samarium", undercover: "Sm" },
+            { civil: "Europium", undercover: "Eu" },
+            { civil: "Gadolinium", undercover: "Gd" },
+            { civil: "Terbium", undercover: "Tb" },
+            { civil: "Dysprosium", undercover: "Dy" },
+            { civil: "Holmium", undercover: "Ho" },
+            { civil: "Erbium", undercover: "Er" },
+            { civil: "Thulium", undercover: "Tm" },
+            { civil: "Ytterbium", undercover: "Yb" },
+            { civil: "Lutetium", undercover: "Lu" },
+            { civil: "Hafnium", undercover: "Hf" },
+            { civil: "Tantalum", undercover: "Ta" },
+            { civil: "Wolfram", undercover: "W" },
+            { civil: "Rhenium", undercover: "Re" },
+            { civil: "Osmium", undercover: "Os" },
+            { civil: "Iridium", undercover: "Ir" },
+            { civil: "Platinum", undercover: "Pt" },
+            { civil: "Gold", undercover: "Au" },
+            { civil: "Mercury", undercover: "Hg" },
+            { civil: "Thallium", undercover: "Tl" },
+            { civil: "Lead", undercover: "Pb" },
+            { civil: "Bismuth", undercover: "Bi" },
+            { civil: "Polonium", undercover: "Po" },
+            { civil: "Astatine", undercover: "At" },
+            { civil: "Radon", undercover: "Rn" },
+            { civil: "Francium", undercover: "Fr" },
+            { civil: "Radium", undercover: "Ra" },
+            { civil: "Actinium", undercover: "Ac" },
+            { civil: "Thorium", undercover: "Th" },
+            { civil: "Protactinium", undercover: "Pa" },
+            { civil: "Uranium", undercover: "U" },
+            { civil: "Neptunium", undercover: "Np" },
+            { civil: "Plutonium", undercover: "Pu" },
+            { civil: "Americium", undercover: "Am" },
+            { civil: "Curium", undercover: "Cm" },
+            { civil: "Berkelium", undercover: "Bk" },
+            { civil: "Californium", undercover: "Cf" },
+            { civil: "Einsteinium", undercover: "Es" },
+            { civil: "Fermium", undercover: "Fm" },
+            { civil: "Mendelevium", undercover: "Md" },
+            { civil: "Nobelium", undercover: "No" },
+            { civil: "Lawrencium", undercover: "Lr" },
+            { civil: "Rutherfordium", undercover: "Rf" },
+            { civil: "Dubnium", undercover: "Db" },
+            { civil: "Seaborgium", undercover: "Sg" },
+            { civil: "Bohrium", undercover: "Bh" },
+            { civil: "Hassium", undercover: "Hs" },
+            { civil: "Meitnerium", undercover: "Mt" },
+            { civil: "Darmstadtium", undercover: "Ds" },
+            { civil: "Roentgenium", undercover: "Rg" },
+            { civil: "Copernicium", undercover: "Cn" },
+            { civil: "Nihonium", undercover: "Nh" },
+            { civil: "Flerovium", undercover: "Fl" },
+            { civil: "Moscovium", undercover: "Mc" },
+            { civil: "Livermorium", undercover: "Lv" },
+            { civil: "Tennessine", undercover: "Ts" },
+            { civil: "Oganesson", undercover: "Og" },
+        ];
+        
+        // Fungsi untuk menampilkan halaman tertentu
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            
+            // Tambahkan efek blood drip pada halaman tertentu
+            if (pageId === 'page-card' || pageId === 'page-game') {
+                createBloodDrips();
+            }
+        }
+        
+        // Fungsi untuk membuat efek tetesan darah
+        function createBloodDrips() {
+            const container = document.getElementById('blood-drips');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 5; i++) {
+                const drip = document.createElement('div');
+                drip.className = 'blood-drip';
+                drip.style.left = Math.random() * 100 + 'vw';
+                drip.style.animation = `bloodDrip ${3 + Math.random() * 5}s linear infinite`;
+                drip.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(drip);
+            }
+        }
+        
+        // Fungsi untuk menyimpan pengaturan
+        function saveSettings() {
+            const totalPlayers = parseInt(document.getElementById('total-players').value);
+            const mrWhiteCount = parseInt(document.getElementById('mr-white-count').value);
+            const undercoverCount = parseInt(document.getElementById('undercover-count').value);
+            
+            // Validasi
+            if (totalPlayers < 3 || totalPlayers > 10) {
+                alert('Jumlah pemain harus antara 3 dan 10');
+                return;
+            }
+            
+            if (mrWhiteCount < 0 || mrWhiteCount > 2) {
+                alert('Jumlah Mr. White harus antara 0 dan 2');
+                return;
+            }
+            
+            if (undercoverCount < 1 || undercoverCount > 3) {
+                alert('Jumlah Undercover harus antara 1 dan 3');
+                return;
+            }
+            
+            if (mrWhiteCount + undercoverCount >= totalPlayers) {
+                alert('Jumlah Mr. White dan Undercover tidak boleh lebih dari atau sama dengan jumlah pemain');
+                return;
+            }
+            
+            gameData.totalPlayers = totalPlayers;
+            gameData.mrWhiteCount = mrWhiteCount;
+            gameData.undercoverCount = undercoverCount;
+            
+            // Buat input untuk nama pemain
+            const container = document.getElementById('players-input-container');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < totalPlayers; i++) {
+                const inputGroup = document.createElement('div');
+                inputGroup.className = 'input-group';
+                
+                const label = document.createElement('label');
+                label.textContent = `Nama Pemain ${i + 1}:`;
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `player-${i}`;
+                input.placeholder = `Masukkan nama pemain ${i + 1}`;
+                
+                inputGroup.appendChild(label);
+                inputGroup.appendChild(input);
+                container.appendChild(inputGroup);
+            }
+            
+            showPage('page-players');
+        }
+        
+        // Fungsi untuk menyimpan nama pemain
+        function savePlayers() {
+            gameData.players = [];
+            
+            for (let i = 0; i < gameData.totalPlayers; i++) {
+                const playerName = document.getElementById(`player-${i}`).value.trim();
+                if (playerName === '') {
+                    alert(`Nama pemain ${i + 1} tidak boleh kosong`);
+                    return;
+                }
+                gameData.players.push(playerName);
+            }
+            
+            // Acak peran
+            assignRoles();
+            
+            showPage('page-announce');
+        }
+        
+        // Fungsi untuk mengacak peran
+        function assignRoles() {
+            // Reset roles
+            gameData.roles = Array(gameData.totalPlayers).fill('civil');
+            
+            // Pilih clue secara acak
+            const randomIndex = Math.floor(Math.random() * cluePairs.length);
+            gameData.civilClue = cluePairs[randomIndex].civil;
+            gameData.undercoverClue = cluePairs[randomIndex].undercover;
+            
+            // Tentukan posisi Mr. White
+            for (let i = 0; i < gameData.mrWhiteCount; i++) {
+                let randomPos;
+                do {
+                    randomPos = Math.floor(Math.random() * gameData.totalPlayers);
+                } while (gameData.roles[randomPos] !== 'civil');
+                
+                gameData.roles[randomPos] = 'mrwhite';
+            }
+            
+            // Tentukan posisi Undercover
+            for (let i = 0; i < gameData.undercoverCount; i++) {
+                let randomPos;
+                do {
+                    randomPos = Math.floor(Math.random() * gameData.totalPlayers);
+                } while (gameData.roles[randomPos] !== 'civil');
+                
+                gameData.roles[randomPos] = 'undercover';
+            }
+            
+            // Reset index pemain saat ini
+            gameData.currentPlayerIndex = 0;
+            gameData.cardOpened = false;
+        }
+        
+        // Fungsi untuk memulai pembukaan kartu
+        function startCardReveal() {
+            showPage('page-card');
+            updatePlayerProgress();
+            showPlayerCard();
+        }
+        
+        // Fungsi untuk memperbarui indikator progres pemain
+        function updatePlayerProgress() {
+            const progressContainer = document.getElementById('player-progress');
+            progressContainer.innerHTML = '';
+            
+            for (let i = 0; i < gameData.totalPlayers; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
+                
+                if (i === gameData.currentPlayerIndex) {
+                    dot.classList.add('active');
+                } else if (i < gameData.currentPlayerIndex) {
+                    dot.classList.add('completed');
+                }
+                
+                progressContainer.appendChild(dot);
+            }
+        }
+        
+        // Fungsi untuk menampilkan kartu pemain saat ini
+        function showPlayerCard() {
+            const card = document.getElementById('card');
+            const currentPlayerName = document.getElementById('current-player-name');
+            const frontPlayerName = document.getElementById('front-player-name');
+            const cardPlayerName = document.getElementById('card-player-name');
+            const cardRole = document.getElementById('card-role');
+            const cardClue = document.getElementById('card-clue');
+            const nextBtn = document.getElementById('next-btn');
+            
+            // Reset kartu ke posisi tertutup
+            card.classList.remove('flipped');
+            nextBtn.style.display = 'none';
+            gameData.cardOpened = false;
+            
+            // Tampilkan nama pemain saat ini
+            const playerName = gameData.players[gameData.currentPlayerIndex];
+            currentPlayerName.textContent = `Pemain: ${playerName}`;
+            frontPlayerName.textContent = playerName;
+            
+            // Siapkan data untuk kartu
+            cardPlayerName.textContent = playerName;
+            
+            const role = gameData.roles[gameData.currentPlayerIndex];
+            let roleText = '';
+            let clueText = '';
+            
+            switch(role) {
+                case 'civil':
+                    roleText = 'CIVIL';
+                    clueText = `Clue: ${gameData.civilClue}`;
+                    break;
+                case 'undercover':
+                    roleText = 'UNDERCOVER';
+                    clueText = `Clue: ${gameData.undercoverClue}`;
+                    break;
+                case 'mrwhite':
+                    roleText = 'MR. WHITE';
+                    clueText = 'Anda tidak memiliki clue. Anda harus menebak clue Civil!';
+                    break;
+            }
+            
+            cardRole.textContent = roleText;
+            cardClue.textContent = clueText;
+            
+            // Tambahkan event listener untuk membalik kartu
+            card.onclick = function() {
+                if (!gameData.cardOpened) {
+                    card.classList.add('flipped');
+                    nextBtn.style.display = 'block';
+                    gameData.cardOpened = true;
+                    
+                    // Hapus event listener setelah kartu dibuka
+                    card.onclick = null;
+                }
+            };
+        }
+        
+        // Fungsi untuk beralih ke pemain berikutnya
+        function nextPlayer() {
+            gameData.currentPlayerIndex++;
+            
+            if (gameData.currentPlayerIndex < gameData.totalPlayers) {
+                updatePlayerProgress();
+                showPlayerCard();
+            } else {
+                // Semua pemain telah melihat kartu mereka
+                showPage('page-game');
+                displayPlayersList();
+            }
+        }
+        
+        // Fungsi untuk menampilkan daftar pemain di halaman permainan
+        function displayPlayersList() {
+            const playersList = document.getElementById('players-list');
+            playersList.innerHTML = '';
+            
+            gameData.players.forEach(player => {
+                const playerItem = document.createElement('div');
+                playerItem.className = 'player-item';
+                playerItem.textContent = player;
+                playersList.appendChild(playerItem);
+            });
+        }
+        
+        // Fungsi untuk mereset permainan
+        function resetGame() {
+            showPage('page-title');
+        }
+        
+        // Inisialisasi
+        window.onload = function() {
+            showPage('page-title');
+        };
+    </script>
 </body>
 </html>
