@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undercover - Game Misteri</title>
+    <title>Undercover e arek arek dewe</title>
     <style>
         :root {
             --primary-dark: #1a0d2a;
@@ -52,7 +52,7 @@
             opacity: 0.8;
         }
         
-        .setup-section, .game-section {
+        .setup-section, .game-section, .name-input-section {
             background: rgba(29, 15, 50, 0.7);
             border: 2px solid var(--accent-purple);
             border-radius: 15px;
@@ -90,6 +90,24 @@
             text-align: center;
         }
         
+        .name-inputs {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .name-input {
+            margin: 8px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .name-input input {
+            width: 100%;
+            max-width: 300px;
+        }
+        
         button {
             background: linear-gradient(to bottom, var(--accent-purple), var(--primary-purple));
             border: 1px solid var(--gold);
@@ -109,6 +127,13 @@
             box-shadow: 0 0 15px var(--gold-glow);
         }
         
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
         .cards-container {
             display: flex;
             flex-wrap: wrap;
@@ -122,6 +147,10 @@
             height: 200px;
             perspective: 1000px;
             cursor: pointer;
+        }
+        
+        .card.disabled {
+            cursor: default;
         }
         
         .card-inner {
@@ -171,6 +200,12 @@
         .role-name {
             font-size: 1.2rem;
             font-weight: bold;
+        }
+        
+        .player-name {
+            font-size: 1.1rem;
+            margin-top: 5px;
+            color: var(--gold);
         }
         
         .role-desc {
@@ -250,6 +285,14 @@
             }
         }
         
+        .instructions {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        
         @media (max-width: 600px) {
             h1 {
                 font-size: 2rem;
@@ -263,6 +306,15 @@
             .role-icon {
                 font-size: 2.5rem;
             }
+            
+            .role-counts {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .setup-section, .game-section, .name-input-section {
+                padding: 15px;
+            }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet">
@@ -273,11 +325,11 @@
     
     <div class="container">
         <h1>UNDERCOVER</h1>
-        <p class="subtitle">Game Misteri dengan Elemen Magis</p>
+        <p class="subtitle">Game anti tikus berdasi</p>
         
         <div class="setup-section" id="setupSection">
             <h2>Atur Permainan</h2>
-            <p>Tentukan jumlah pemain dan peran dalam permainan</p>
+            <p>Sopo ae seng main</p>
             
             <div class="role-counts">
                 <div class="role-input">
@@ -294,12 +346,29 @@
                 </div>
             </div>
             
+            <button id="setPlayerNames">Jenengmu</button>
+        </div>
+        
+        <div class="name-input-section hidden" id="nameInputSection">
+            <h2>Jenengmu</h2>
+            <p>Nama per pemain</p>
+            
+            <div class="name-inputs" id="nameInputs">
+                <!-- Input nama akan di-generate oleh JavaScript -->
+            </div>
+            
+            <div class="instructions">
+                <p><strong>Petunjuk:</stong>Setelah di tutup gabisa di lihat lagi.</p>
+            </div>
+            
             <button id="startGame" class="pulse">Mulai Permainan</button>
+            <button id="backToSetup">Kembali ke Pengaturan</button>
         </div>
         
         <div class="game-section hidden" id="gameSection">
             <h2>Kartu Peran</h2>
             <p>Klik pada kartu untuk melihat peran masing-masing pemain</p>
+            <p><em>Setelah kartu ditutup, tidak dapat dibuka lagi!</em></p>
             
             <div class="cards-container" id="cardsContainer">
                 <!-- Kartu akan di-generate oleh JavaScript -->
@@ -312,14 +381,21 @@
     <script>
         // Elemen DOM
         const setupSection = document.getElementById('setupSection');
+        const nameInputSection = document.getElementById('nameInputSection');
         const gameSection = document.getElementById('gameSection');
+        const nameInputsContainer = document.getElementById('nameInputs');
         const cardsContainer = document.getElementById('cardsContainer');
+        const setPlayerNamesBtn = document.getElementById('setPlayerNames');
         const startGameBtn = document.getElementById('startGame');
+        const backToSetupBtn = document.getElementById('backToSetup');
         const resetGameBtn = document.getElementById('resetGame');
         const totalPlayersInput = document.getElementById('totalPlayers');
         const mrWhiteCountInput = document.getElementById('mrWhiteCount');
         const undercoverCountInput = document.getElementById('undercoverCount');
         const floatingElements = document.getElementById('floatingElements');
+        
+        // Data pemain
+        let players = [];
         
         // Buat elemen floating untuk efek visual
         function createFloatingElements() {
@@ -369,12 +445,59 @@
             return true;
         }
         
+        // Generate input nama
+        function generateNameInputs() {
+            const totalPlayers = parseInt(totalPlayersInput.value);
+            nameInputsContainer.innerHTML = '';
+            
+            for (let i = 0; i < totalPlayers; i++) {
+                const nameInputDiv = document.createElement('div');
+                nameInputDiv.classList.add('name-input');
+                nameInputDiv.innerHTML = `
+                    <label for="playerName${i}">Nama Pemain ${i + 1}</label>
+                    <input type="text" id="playerName${i}" placeholder="Masukkan nama" required>
+                `;
+                nameInputsContainer.appendChild(nameInputDiv);
+            }
+        }
+        
+        // Validasi nama pemain
+        function validatePlayerNames() {
+            const totalPlayers = parseInt(totalPlayersInput.value);
+            
+            for (let i = 0; i < totalPlayers; i++) {
+                const nameInput = document.getElementById(`playerName${i}`);
+                if (!nameInput.value.trim()) {
+                    alert(`Nama untuk Pemain ${i + 1} harus diisi!`);
+                    nameInput.focus();
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        // Simpan nama pemain
+        function savePlayerNames() {
+            const totalPlayers = parseInt(totalPlayersInput.value);
+            players = [];
+            
+            for (let i = 0; i < totalPlayers; i++) {
+                const nameInput = document.getElementById(`playerName${i}`);
+                players.push({
+                    id: i,
+                    name: nameInput.value.trim() || `Pemain ${i + 1}`,
+                    role: null,
+                    revealed: false
+                });
+            }
+        }
+        
         // Generate kartu peran
         function generateRoleCards() {
-            const totalPlayers = parseInt(totalPlayersInput.value);
             const mrWhiteCount = parseInt(mrWhiteCountInput.value);
             const undercoverCount = parseInt(undercoverCountInput.value);
-            const civilianCount = totalPlayers - mrWhiteCount - undercoverCount;
+            const civilianCount = players.length - mrWhiteCount - undercoverCount;
             
             // Buat array peran
             const roles = [];
@@ -397,30 +520,45 @@
             // Acak urutan peran
             shuffleArray(roles);
             
+            // Assign peran ke pemain
+            players.forEach((player, index) => {
+                player.role = roles[index];
+            });
+            
             // Kosongkan container kartu
             cardsContainer.innerHTML = '';
             
             // Buat kartu untuk setiap pemain
-            roles.forEach((role, index) => {
+            players.forEach((player, index) => {
                 const card = document.createElement('div');
                 card.classList.add('card');
+                card.dataset.playerId = player.id;
                 card.innerHTML = `
                     <div class="card-inner">
                         <div class="card-front">
                             <div class="role-icon">?</div>
-                            <div class="role-name">Pemain ${index + 1}</div>
+                            <div class="player-name">${player.name}</div>
                             <div class="role-desc">Klik untuk melihat peran</div>
                         </div>
-                        <div class="card-back ${role}">
-                            <div class="role-icon">${getRoleIcon(role)}</div>
-                            <div class="role-name">${getRoleName(role)}</div>
-                            <div class="role-desc">${getRoleDescription(role)}</div>
+                        <div class="card-back ${player.role}">
+                            <div class="role-icon">${getRoleIcon(player.role)}</div>
+                            <div class="role-name">${getRoleName(player.role)}</div>
+                            <div class="player-name">${player.name}</div>
+                            <div class="role-desc">${getRoleDescription(player.role)}</div>
                         </div>
                     </div>
                 `;
                 
                 card.addEventListener('click', () => {
-                    card.classList.toggle('flipped');
+                    if (!card.classList.contains('flipped') && !player.revealed) {
+                        card.classList.add('flipped');
+                        player.revealed = true;
+                        
+                        // Set timeout untuk menonaktifkan kartu setelah beberapa detik
+                        setTimeout(() => {
+                            card.classList.add('disabled');
+                        }, 2000);
+                    }
                 });
                 
                 cardsContainer.appendChild(card);
@@ -467,17 +605,32 @@
         }
         
         // Event listeners
-        startGameBtn.addEventListener('click', () => {
+        setPlayerNamesBtn.addEventListener('click', () => {
             if (validateInputs()) {
                 setupSection.classList.add('hidden');
+                nameInputSection.classList.remove('hidden');
+                generateNameInputs();
+            }
+        });
+        
+        startGameBtn.addEventListener('click', () => {
+            if (validatePlayerNames()) {
+                savePlayerNames();
+                nameInputSection.classList.add('hidden');
                 gameSection.classList.remove('hidden');
                 generateRoleCards();
             }
         });
         
+        backToSetupBtn.addEventListener('click', () => {
+            nameInputSection.classList.add('hidden');
+            setupSection.classList.remove('hidden');
+        });
+        
         resetGameBtn.addEventListener('click', () => {
             gameSection.classList.add('hidden');
             setupSection.classList.remove('hidden');
+            players = [];
         });
         
         // Inisialisasi
