@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undercover e arek arek dewe</title>
+    <title>Undercover - Game Misteri</title>
     <style>
         :root {
             --primary-dark: #1a0d2a;
@@ -52,7 +52,7 @@
             opacity: 0.8;
         }
         
-        .setup-section, .game-section, .name-input-section {
+        .setup-section, .game-section, .name-input-section, .player-turn-section {
             background: rgba(29, 15, 50, 0.7);
             border: 2px solid var(--accent-purple);
             border-radius: 15px;
@@ -214,6 +214,21 @@
             opacity: 0.8;
         }
         
+        .clue-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        
+        .clue-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--gold);
+            margin: 10px 0;
+            text-shadow: 0 0 5px var(--gold-glow);
+        }
+        
         .mr-white {
             background: linear-gradient(135deg, #4a306d, #2a1845) !important;
             border: 2px solid var(--gold) !important;
@@ -293,6 +308,13 @@
             font-size: 0.9rem;
         }
         
+        .current-player {
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin: 15px 0;
+            text-shadow: 0 0 5px var(--gold-glow);
+        }
+        
         @media (max-width: 600px) {
             h1 {
                 font-size: 2rem;
@@ -312,8 +334,12 @@
                 align-items: center;
             }
             
-            .setup-section, .game-section, .name-input-section {
+            .setup-section, .game-section, .name-input-section, .player-turn-section {
                 padding: 15px;
+            }
+            
+            .clue-text {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -325,11 +351,11 @@
     
     <div class="container">
         <h1>UNDERCOVER</h1>
-        <p class="subtitle">Game anti tikus berdasi</p>
+        <p class="subtitle">Game Misteri dengan Elemen Magis</p>
         
         <div class="setup-section" id="setupSection">
             <h2>Atur Permainan</h2>
-            <p>Sopo ae seng main</p>
+            <p>Tentukan jumlah pemain dan peran dalam permainan</p>
             
             <div class="role-counts">
                 <div class="role-input">
@@ -346,32 +372,66 @@
                 </div>
             </div>
             
-            <button id="setPlayerNames">Jenengmu</button>
+            <button id="setPlayerNames">Atur Nama Pemain</button>
         </div>
         
         <div class="name-input-section hidden" id="nameInputSection">
-            <h2>Jenengmu</h2>
-            <p>Nama per pemain</p>
+            <h2>Masukkan Nama Pemain</h2>
+            <p>Isi nama untuk setiap pemain</p>
             
             <div class="name-inputs" id="nameInputs">
                 <!-- Input nama akan di-generate oleh JavaScript -->
             </div>
             
             <div class="instructions">
-                <p><strong>Petunjuk:</stong>Setelah di tutup gabisa di lihat lagi.</p>
+                <p><strong>Petunjuk:</strong> Setiap pemain akan melihat perannya secara bergiliran. Setelah melihat peran, klik "Lanjut ke Pemain Berikutnya" untuk menyembunyikan peran Anda.</p>
             </div>
             
             <button id="startGame" class="pulse">Mulai Permainan</button>
             <button id="backToSetup">Kembali ke Pengaturan</button>
         </div>
         
-        <div class="game-section hidden" id="gameSection">
-            <h2>Kartu Peran</h2>
-            <p>Klik pada kartu untuk melihat peran masing-masing pemain</p>
-            <p><em>Setelah kartu ditutup, tidak dapat dibuka lagi!</em></p>
+        <div class="player-turn-section hidden" id="playerTurnSection">
+            <h2>Giliran Pemain</h2>
+            <div class="current-player" id="currentPlayerName"></div>
+            <p>Serahkan perangkat kepada pemain yang disebutkan di atas</p>
             
-            <div class="cards-container" id="cardsContainer">
-                <!-- Kartu akan di-generate oleh JavaScript -->
+            <div class="card" id="currentPlayerCard">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="role-icon">?</div>
+                        <div class="player-name" id="turnPlayerName">Nama Pemain</div>
+                        <div class="role-desc">Klik untuk melihat peran</div>
+                    </div>
+                    <div class="card-back" id="turnPlayerRole">
+                        <div class="role-icon" id="turnRoleIcon">👤</div>
+                        <div class="role-name" id="turnRoleName">Peran</div>
+                        <div class="player-name" id="turnPlayerNameBack">Nama Pemain</div>
+                        <div class="role-desc" id="turnRoleDesc">Deskripsi peran</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="clue-section" id="clueSection">
+                <h3>Kata Kunci</h3>
+                <div class="clue-text" id="clueText"></div>
+                <p id="clueDescription">Deskripsi kata kunci</p>
+            </div>
+            
+            <button id="nextPlayer">Lanjut ke Pemain Berikutnya</button>
+        </div>
+        
+        <div class="game-section hidden" id="gameSection">
+            <h2>Permainan Dimulai!</h2>
+            <p>Semua pemain sudah mengetahui peran mereka. Sekarang saatnya bermain!</p>
+            
+            <div class="instructions">
+                <h3>Aturan Permainan:</h3>
+                <p>1. Civilian dan Undercover mengetahui kata kunci mereka</p>
+                <p>2. Mr. White tidak mengetahui kata kunci apapun</p>
+                <p>3. Diskusikan dan cari tahu siapa Undercover dan Mr. White!</p>
+                <p>4. Undercover harus berusaha tidak ketahuan</p>
+                <p>5. Mr. White harus menebak kata kunci Civilian</p>
             </div>
             
             <button id="resetGame">Ulangi Permainan</button>
@@ -382,20 +442,765 @@
         // Elemen DOM
         const setupSection = document.getElementById('setupSection');
         const nameInputSection = document.getElementById('nameInputSection');
+        const playerTurnSection = document.getElementById('playerTurnSection');
         const gameSection = document.getElementById('gameSection');
         const nameInputsContainer = document.getElementById('nameInputs');
-        const cardsContainer = document.getElementById('cardsContainer');
+        const currentPlayerName = document.getElementById('currentPlayerName');
+        const turnPlayerName = document.getElementById('turnPlayerName');
+        const turnPlayerNameBack = document.getElementById('turnPlayerNameBack');
+        const turnRoleIcon = document.getElementById('turnRoleIcon');
+        const turnRoleName = document.getElementById('turnRoleName');
+        const turnRoleDesc = document.getElementById('turnRoleDesc');
+        const clueText = document.getElementById('clueText');
+        const clueDescription = document.getElementById('clueDescription');
+        const clueSection = document.getElementById('clueSection');
+        const currentPlayerCard = document.getElementById('currentPlayerCard');
         const setPlayerNamesBtn = document.getElementById('setPlayerNames');
         const startGameBtn = document.getElementById('startGame');
         const backToSetupBtn = document.getElementById('backToSetup');
+        const nextPlayerBtn = document.getElementById('nextPlayer');
         const resetGameBtn = document.getElementById('resetGame');
         const totalPlayersInput = document.getElementById('totalPlayers');
         const mrWhiteCountInput = document.getElementById('mrWhiteCount');
         const undercoverCountInput = document.getElementById('undercoverCount');
         const floatingElements = document.getElementById('floatingElements');
         
-        // Data pemain
+        // Data permainan
         let players = [];
+        let currentPlayerIndex = 0;
+        let civilianWord = '';
+        let undercoverWord = '';
+        
+        // Daftar kata kunci (1000 kata)
+        const wordList = [
+            { civilian: "Pizza", undercover: "Pasta", description: "Makanan Italia yang populer" },
+            { civilian: "Kucing", undercover: "Anjing", description: "Hewan peliharaan yang lucu" },
+            { civilian: "Mobil", undercover: "Motor", description: "Kendaraan bermotor" },
+            { civilian: "Gunung", undercover: "Bukit", description: "Bentuk permukaan bumi yang tinggi" },
+            { civilian: "Laut", undercover: "Sungai", description: "Perairan yang luas" },
+            { civilian: "Hujan", undercover: "Salju", description: "Curah air dari langit" },
+            { civilian: "Matahari", undercover: "Bulan", description: "Benda langit yang bersinar" },
+            { civilian: "Kopi", undercover: "Teh", description: "Minuman berkafein" },
+            { civilian: "Buku", undercover: "Majalah", description: "Bacaan untuk memperoleh informasi" },
+            { civilian: "Sepatu", undercover: "Sandal", description: "Alas kaki yang nyaman" },
+            { civilian: "Pintu", undercover: "Jendela", description: "Akses masuk ke ruangan" },
+            { civilian: "Kamar", undercover: "Ruang", description: "Bagian dari sebuah rumah" },
+            { civilian: "Pohon", undercover: "Tanaman", description: "Tumbuhan yang tumbuh tinggi" },
+            { civilian: "Api", undercover: "Air", description: "Unsur alam yang penting" },
+            { civilian: "Angin", undercover: "Badai", description: "Gerakan udara di atmosfer" },
+            { civilian: "Bunga", undercover: "Daun", description: "Bagian dari tumbuhan" },
+            { civilian: "Kota", undercover: "Desa", description: "Tempat tinggal masyarakat" },
+            { civilian: "Jalan", undercover: "Jalur", description: "Tempat untuk bepergian" },
+            { civilian: "Makan", undercover: "Minum", description: "Kebutuhan dasar manusia" },
+            { civilian: "Tidur", undercover: "Bangun", description: "Aktivitas istirahat" },
+            { civilian: "Bermain", undercover: "Bekerja", description: "Kegiatan yang dilakukan" },
+            { civilian: "Belajar", undercover: "Mengajar", description: "Proses transfer pengetahuan" },
+            { civilian: "Menari", undercover: "Menyanyi", description: "Ekspresi seni melalui gerakan" },
+            { civilian: "Melukis", undercover: "Menggambar", description: "Kegiatan seni visual" },
+            { civilian: "Menulis", undercover: "Membaca", description: "Keterampilan literasi" },
+            { civilian: "Berbicara", undercover: "Mendengarkan", description: "Komunikasi antar manusia" },
+            { civilian: "Berlari", undercover: "Berjalan", description: "Gerakan tubuh dengan kaki" },
+            { civilian: "Terbang", undercover: "Melayang", description: "Gerakan di udara" },
+            { civilian: "Berenang", undercover: "Menyelam", description: "Aktivitas di dalam air" },
+            { civilian: "Memasak", undercover: "Memanggang", description: "Menyiapkan makanan" },
+            { civilian: "Membersihkan", undercover: "Merapikan", description: "Menjaga kebersihan" },
+            { civilian: "Membeli", undercover: "Menjual", description: "Aktivitas ekonomi" },
+            { civilian: "Memberi", undercover: "Menerima", description: "Interaksi sosial" },
+            { civilian: "Membantu", undercover: "Menolong", description: "Tindakan baik kepada orang lain" },
+            { civilian: "Menunggu", undercover: "Menanti", description: "Aktivitas sabar" },
+            { civilian: "Mencari", undercover: "Menemukan", description: "Proses mendapatkan sesuatu" },
+            { civilian: "Membawa", undercover: "Mengangkat", description: "Memindahkan benda" },
+            { civilian: "Melempar", undercover: "Menangkap", description: "Gerakan dengan bola" },
+            { civilian: "Memukul", undercover: "Menendang", description: "Gerakan olahraga" },
+            { civilian: "Melompat", undercover: "Merangkak", description: "Cara bergerak" },
+            { civilian: "Duduk", undercover: "Berdiri", description: "Posisi tubuh" },
+            { civilian: "Berbaring", undercover: "Tiduran", description: "Posisi istirahat" },
+            { civilian: "Tertawa", undercover: "Tersenyum", description: "Ekspresi kebahagiaan" },
+            { civilian: "Menangis", undercover: "Sedih", description: "Ekspresi kesedihan" },
+            { civilian: "Marah", undercover: "Kesal", description: "Ekspresi kemarahan" },
+            { civilian: "Takut", undercover: "Cemas", description: "Perasaan khawatir" },
+            { civilian: "Senang", undercover: "Gembira", description: "Perasaan bahagia" },
+            { civilian: "Sakit", undercover: "Sehat", description: "Kondisi tubuh" },
+            { civilian: "Panas", undercover: "Dingin", description: "Suhu lingkungan" },
+            { civilian: "Terang", undercover: "Gelap", description: "Kondisi pencahayaan" },
+            { civilian: "Kering", undercover: "Basah", description: "Kondisi kelembaban" },
+            { civilian: "Keras", undercover: "Lunak", description: "Tingkat kekerasan" },
+            { civilian: "Berat", undercover: "Ringan", description: "Massa benda" },
+            { civilian: "Tinggi", undercover: "Rendah", description: "Pengukuran vertikal" },
+            { civilian: "Panjang", undercover: "Pendek", description: "Pengukuran horizontal" },
+            { civilian: "Lebar", undercover: "Sempit", description: "Dimensi ruang" },
+            { civilian: "Dalam", undercover: "Dangkal", description: "Kedalaman" },
+            { civilian: "Cepat", undercover: "Lambat", description: "Kecepatan" },
+            { civilian: "Awal", undercover: "Akhir", description: "Titik waktu" },
+            { civilian: "Atas", undercover: "Bawah", description: "Posisi relatif" },
+            { civilian: "Kiri", undercover: "Kanan", description: "Arah" },
+            { civilian: "Depan", undercover: "Belakang", description: "Posisi" },
+            { civilian: "Dalam", undercover: "Luar", description: "Lokasi" },
+            { civilian: "Jauh", undercover: "Dekat", description: "Jarak" },
+            { civilian: "Besar", undercover: "Kecil", description: "Ukuran" },
+            { civilian: "Banyak", undercover: "Sedikit", description: "Kuantitas" },
+            { civilian: "Penuh", undercover: "Kosong", description: "Kapasitas" },
+            { civilian: "Baru", undercover: "Lama", description: "Usia" },
+            { civilian: "Muda", undercover: "Tua", description: "Umur" },
+            { civilian: "Pria", undercover: "Wanita", description: "Jenis kelamin" },
+            { civilian: "Anak", undercover: "Dewasa", description: "Tahap kehidupan" },
+            { civilian: "Kaya", undercover: "Miskin", description: "Status ekonomi" },
+            { civilian: "Pintar", undercover: "Bodoh", description: "Kecerdasan" },
+            { civilian: "Kuat", undercover: "Lemah", description: "Kekuatan" },
+            { civilian: "Cantik", undercover: "Tampan", description: "Penampilan" },
+            { civilian: "Baik", undercover: "Jahat", description: "Sifat" },
+            { civilian: "Benar", undercover: "Salah", description: "Kebenaran" },
+            { civilian: "Mudah", undercover: "Sulit", description: "Tingkat kesulitan" },
+            { civilian: "Aman", undercover: "Berbahaya", description: "Tingkat keamanan" },
+            { civilian: "Bersih", undercover: "Kotor", description: "Kebersihan" },
+            { civilian: "Rapi", undercover: "Berantakan", description: "Keteraturan" },
+            { civilian: "Indah", undercover: "Jelek", description: "Estetika" },
+            { civilian: "Enak", undercover: "Tidak enak", description: "Rasa" },
+            { civilian: "Manis", undercover: "Asin", description: "Cita rasa" },
+            { civilian: "Pahit", undercover: "Asam", description: "Rasa dasar" },
+            { civilian: "Pedas", undercover: "Hambar", description: "Rasa makanan" },
+            { civilian: "Hangat", undercover: "Segar", description: "Sensasi suhu" },
+            { civilian: "Lembut", undercover: "Kasar", description: "Tekstur" },
+            { civilian: "Halus", undercover: "Kasar", description: "Permukaan" },
+            { civilian: "Padat", undercover: "Cair", description: "Wujud benda" },
+            { civilian: "Gas", undercover: "Plasma", description: "State of matter" },
+            { civilian: "Cahaya", undercover: "Gelap", description: "Iluminasi" },
+            { civilian: "Suara", undercover: "Bunyi", description: "Getaran udara" },
+            { civilian: "Warna", undercover: "Corak", description: "Spektrum visual" },
+            { civilian: "Bentuk", undercover: "Figur", description: "Konfigurasi" },
+            { civilian: "Ukuran", undercover: "Dimensi", description: "Pengukuran" },
+            { civilian: "Berat", undercover: "Massa", description: "Gravitasi" },
+            { civilian: "Waktu", undercover: "Masa", description: "Kontinum" },
+            { civilian: "Ruangan", undercover: "Ruang", description: "Area tertutup" },
+            { civilian: "Tempat", undercover: "Lokasi", description: "Posisi geografis" },
+            { civilian: "Arah", undercover: "Jalur", description: "Vektor" },
+            { civilian: "Jarak", undercover: "Interval", description: "Pemisahan spasial" },
+            { civilian: "Kecepatan", undercover: "Percepatan", description: "Laju perubahan" },
+            { civilian: "Tenaga", undercover: "Energi", description: "Kemampuan melakukan kerja" },
+            { civilian: "Daya", undercover: "Kekuatan", description: "Kapasitas" },
+            { civilian: "Tekanan", undercover: "Tegangan", description: "Gaya per satuan luas" },
+            { civilian: "Suhu", undercover: "Panas", description: "Derajat panas" },
+            { civilian: "Listrik", undercover: "Magnet", description: "Fenomena fisika" },
+            { civilian: "Gaya", undercover: "Gerak", description: "Interaksi fisika" },
+            { civilian: "Cahaya", undercover: "Optik", description: "Radiasi elektromagnetik" },
+            { civilian: "Bunyi", undercover: "Getaran", description: "Gelombang mekanik" },
+            { civilian: "Panas", undercover: "Kalor", description: "Energi termal" },
+            { civilian: "Magnet", undercover: "Medan", description: "Gaya tarik-menarik" },
+            { civilian: "Gravitasi", undercover: "Massa", description: "Gaya tarik bumi" },
+            { civilian: "Atom", undercover: "Molekul", description: "Partikel penyusun materi" },
+            { civilian: "Elektron", undercover: "Proton", description: "Partikel subatom" },
+            { civilian: "Neutron", undercover: "Nukleus", description: "Inti atom" },
+            { civilian: "Kimia", undercover: "Fisika", description: "Ilmu pengetahuan alam" },
+            { civilian: "Biologi", undercover: "Zoologi", description: "Ilmu kehidupan" },
+            { civilian: "Geologi", undercover: "Geografi", description: "Ilmu bumi" },
+            { civilian: "Astronomi", undercover: "Astrofisika", description: "Ilmu antariksa" },
+            { civilian: "Matematika", undercover: "Aritmatika", description: "Ilmu hitung" },
+            { civilian: "Aljabar", undercover: "Geometri", description: "Cabang matematika" },
+            { civilian: "Statistika", undercover: "Probabilitas", description: "Analisis data" },
+            { civilian: "Logika", undercover: "Filsafat", description: "Pemikiran rasional" },
+            { civilian: "Bahasa", undercover: "Sastra", description: "Komunikasi manusia" },
+            { civilian: "Sejarah", undercover: "Arkeologi", description: "Masa lalu" },
+            { civilian: "Budaya", undercover: "Tradisi", description: "Warisan masyarakat" },
+            { civilian: "Seni", undercover: "Musik", description: "Ekspresi kreatif" },
+            { civilian: "Tari", undercover: "Teater", description: "Pertunjukan" },
+            { civilian: "Film", undercover: "Drama", description: "Hiburan visual" },
+            { civilian: "Olahraga", undercover: "Permainan", description: "Aktivitas fisik" },
+            { civilian: "Bola", undercover: "Lapangan", description: "Alat olahraga" },
+            { civilian: "Tim", undercover: "Individu", description: "Kelompok pemain" },
+            { civilian: "Kompetisi", undercover: "Kooperasi", description: "Bentuk interaksi" },
+            { civilian: "Menang", undercover: "Kalah", description: "Hasil pertandingan" },
+            { civilian: "Juara", undercover: "Runner-up", description: "Peringkat" },
+            { civilian: "Medali", undercover: "Piala", description: "Penghargaan" },
+            { civilian: "Pelatih", undercover: "Pemain", description: "Peran dalam tim" },
+            { civilian: "Strategi", undercover: "Taktik", description: "Rencana permainan" },
+            { civilian: "Latihan", undercover: "Pemanasan", description: "Persiapan" },
+            { civilian: "Teknik", undercover: "Skill", description: "Kemampuan" },
+            { civilian: "Formasi", undercover: "Posisi", description: "Susunan pemain" },
+            { civilian: "Serangan", undercover: "Pertahanan", description: "Strategi permainan" },
+            { civilian: "Gol", undercover: "Poin", description: "Skor" },
+            { civilian: "Wasit", undercover: "Hakim", description: "Pengawas pertandingan" },
+            { civilian: "Peraturan", undercover: "Regulasi", description: "Aturan main" },
+            { civilian: "Pelanggaran", undercover: "Hukuman", description: "Konsekuensi" },
+            { civilian: "Kartu", undercover: "Sanksi", description: "Tanda peringatan" },
+            { civilian: "Offside", undercover: "Foul", description: "Pelanggaran dalam sepak bola" },
+            { civilian: "Penalti", undercover: "Free kick", description: "Hukuman dalam sepak bola" },
+            { civilian: "Corner", undercover: "Throw-in", description: "Situasi dalam sepak bola" },
+            { civilian: "Gawang", undercover: "Jaring", description: "Target dalam sepak bola" },
+            { civilian: "Kiper", undercover: "Bek", description: "Posisi dalam sepak bola" },
+            { civilian: "Gelandang", undercover: "Striker", description: "Posisi dalam sepak bola" },
+            { civilian: "Kapten", undercover: "Vice-captain", description: "Pemimpin tim" },
+            { civilian: "Supporter", undercover: "Fan", description: "Pendukung tim" },
+            { civilian: "Stadion", undercover: "Arena", description: "Tempat pertandingan" },
+            { civilian: "Tribun", undercover: "Kursi", description: "Tempat duduk penonton" },
+            { civilian: "Tiket", undercover: "Karcis", description: "Akses masuk" },
+            { civilian: "Merchandise", undercover: "Souvenir", description: "Barang dagangan" },
+            { civilian: "Sponsor", undercover: "Donatur", description: "Penyandang dana" },
+            { civilian: "Iklan", undercover: "Promosi", description: "Pemasaran" },
+            { civilian: "Broadcast", undercover: "Siaran", description: "Penyiaran" },
+            { civilian: "Komentator", undercover: "Analis", description: "Pemberi komentar" },
+            { civilian: "Highlight", undercover: "Rekaman", description: "Cuplikan pertandingan" },
+            { civilian: "Statistik", undercover: "Data", description: "Informasi numerik" },
+            { civilian: "Prediksi", undercover: "Ramalan", description: "Perkiraan hasil" },
+            { civilian: "Analisis", undercover: "Evaluasi", description: "Penilaian" },
+            { civilian: "Kritik", undercover: "Pujian", description: "Umpan balik" },
+            { civilian: "Debat", undercover: "Diskusi", description: "Pertukaran pendapat" },
+            { civilian: "Opini", undercover: "Fakta", description: "Jenis informasi" },
+            { civilian: "Argumen", undercover: "Alasan", description: "Dasar pemikiran" },
+            { civilian: "Bukti", undercover: "Kesaksian", description: "Penguat argumen" },
+            { civilian: "Kesimpulan", undercover: "Keputusan", description: "Hasil akhir" },
+            { civilian: "Solusi", undercover: "Jawaban", description: "Penyelesaian masalah" },
+            { civilian: "Masalah", undercover: "Tantangan", description: "Hal yang dihadapi" },
+            { civilian: "Kesulitan", undercover: "Rintangan", description: "Hambatan" },
+            { civilian: "Kegagalan", undercover: "Kekecewaan", description: "Hasil tidak memuaskan" },
+            { civilian: "Keberhasilan", undercover: "Kemenangan", description: "Pencapaian" },
+            { civilian: "Kesempatan", undercover: "Peluang", description: "Momentum" },
+            { civilian: "Risiko", undercover: "Bahaya", description: "Kemungkinan buruk" },
+            { civilian: "Manfaat", undercover: "Keuntungan", description: "Nilai positif" },
+            { civilian: "Kerugian", undercover: "Kekurangan", description: "Nilai negatif" },
+            { civilian: "Peningkatan", undercover: "Perbaikan", description: "Perubahan positif" },
+            { civilian: "Penurunan", undercover: "Kemunduran", description: "Perubahan negatif" },
+            { civilian: "Pertumbuhan", undercover: "Perkembangan", description: "Evolusi" },
+            { civilian: "Perubahan", undercover: "Transformasi", description: "Proses menjadi berbeda" },
+            { civilian: "Kestabilan", undercover: "Konsistensi", description: "Keadaan tetap" },
+            { civilian: "Ketidakpastian", undercover: "Keraguan", description: "Kondisi tidak pasti" },
+            { civilian: "Kepastian", undercover: "Keyakinan", description: "Kondisi pasti" },
+            { civilian: "Kebebasan", undercover: "Kemandirian", description: "Keadaan merdeka" },
+            { civilian: "Keterbatasan", undercover: "Kekangan", description: "Pembatasan" },
+            { civilian: "Kebutuhan", undercover: "Keinginan", description: "Hal yang diperlukan" },
+            { civilian: "Prioritas", undercover: "Kepentingan", description: "Urutan penting" },
+            { civilian: "Tujuan", undercover: "Target", description: "Sasaran" },
+            { civilian: "Rencana", undercover: "Strategi", description: "Cara mencapai tujuan" },
+            { civilian: "Langkah", undercover: "Tahap", description: "Bagian dari proses" },
+            { civilian: "Metode", undercover: "Cara", description: "Pendekatan" },
+            { civilian: "Sistem", undercover: "Struktur", description: "Rangkaian terorganisir" },
+            { civilian: "Proses", undercover: "Prosedur", description: "Urutan kegiatan" },
+            { civilian: "Hasil", undercover: "Output", description: "Produk akhir" },
+            { civilian: "Dampak", undercover: "Pengaruh", description: "Efek" },
+            { civilian: "Konsekuensi", undercover: "Akibat", description: "Hasil dari suatu tindakan" },
+            { civilian: "Penyebab", undercover: "Alasan", description: "Sumber masalah" },
+            { civilian: "Faktor", undercover: "Variabel", description: "Elemen yang mempengaruhi" },
+            { civilian: "Kondisi", undercover: "Situasi", description: "Keadaan" },
+            { civilian: "Lingkungan", undercover: "Sekitar", description: "Tempat tinggal" },
+            { civilian: "Komunitas", undercover: "Masyarakat", description: "Kelompok sosial" },
+            { civilian: "Keluarga", undercover: "Rumah tangga", description: "Unit sosial terkecil" },
+            { civilian: "Teman", undercover: "Sahabat", description: "Relasi sosial" },
+            { civilian: "Tetangga", undercover: "Lingkungan", description: "Orang yang tinggal dekat" },
+            { civilian: "Kerja", undercover: "Profesi", description: "Aktivitas mencari nafkah" },
+            { civilian: "Sekolah", undercover: "Pendidikan", description: "Tempat belajar" },
+            { civilian: "Universitas", undercover: "Kampus", description: "Institusi pendidikan tinggi" },
+            { civilian: "Guru", undercover: "Dosen", description: "Pengajar" },
+            { civilian: "Murid", undercover: "Mahasiswa", description: "Pembelajar" },
+            { civilian: "Buku", undercover: "Modul", description: "Sumber belajar" },
+            { civilian: "Pelajaran", undercover: "Mata kuliah", description: "Subjek pendidikan" },
+            { civilian: "Ujian", undercover: "Tes", description: "Evaluasi belajar" },
+            { civilian: "Nilai", undercover: "Skor", description: "Hasil evaluasi" },
+            { civilian: "Ijazah", undercover: "Sertifikat", description: "Bukti kelulusan" },
+            { civilian: "Karir", undercover: "Pekerjaan", description: "Jalur profesional" },
+            { civilian: "Perusahaan", undercover: "Korporasi", description: "Organisasi bisnis" },
+            { civilian: "Kantor", undercover: "Kantor", description: "Tempat kerja" },
+            { civilian: "Meeting", undercover: "Rapat", description: "Pertemuan kerja" },
+            { civilian: "Proyek", undercover: "Tugas", description: "Pekerjaan khusus" },
+            { civilian: "Deadline", undercover: "Batas waktu", description: "Tenggat waktu" },
+            { civilian: "Produk", undercover: "Barang", description: "Hasil produksi" },
+            { civilian: "Layanan", undercover: "Jasa", description: "Bentuk pelayanan" },
+            { civilian: "Kualitas", undercover: "Mutu", description: "Tingkat keunggulan" },
+            { civilian: "Harga", undercover: "Biaya", description: "Nilai moneter" },
+            { civilian: "Pasar", undercover: "Market", description: "Tempat jual beli" },
+            { civilian: "Konsumen", undercover: "Pembeli", description: "Pengguna produk" },
+            { civilian: "Pemasok", undercover: "Supplier", description: "Penyedia barang" },
+            { civilian: "Distributor", undercover: "Agen", description: "Penyalur produk" },
+            { civilian: "Retail", undercover: "Eceran", description: "Penjualan langsung" },
+            { civilian: "Grosir", undercover: "Partai", description: "Penjualan besar" },
+            { civilian: "Diskon", undercover: "Promo", description: "Potongan harga" },
+            { civilian: "Keuntungan", undercover: "Profit", description: "Pendapatan bersih" },
+            { civilian: "Kerugian", undercover: "Loss", description: "Penurunan nilai" },
+            { civilian: "Investasi", undercover: "Penanaman modal", description: "Penempatan dana" },
+            { civilian: "Saham", undercover: "Obligasi", description: "Instrumen investasi" },
+            { civilian: "Bank", undercover: "Fintech", description: "Lembaga keuangan" },
+            { civilian: "Kredit", undercover: "Pinjaman", description: "Pembiayaan" },
+            { civilian: "Tabungan", undercover: "Deposito", description: "Simpanan" },
+            { civilian: "Asuransi", undercover: "Proteksi", description: "Perlindungan risiko" },
+            { civilian: "Pajak", undercover: "Retribusi", description: "Iuran wajib" },
+            { civilian: "Budget", undercover: "Anggaran", description: "Rencana keuangan" },
+            { civilian: "Pembukuan", undercover: "Akuntansi", description: "Pencatatan keuangan" },
+            { civilian: "Audit", undercover: "Pemeriksaan", description: "Evaluasi keuangan" },
+            { civilian: "Laporan", undercover: "Report", description: "Dokumen informasi" },
+            { civilian: "Presentasi", undercover: "Paparan", description: "Penyampaian informasi" },
+            { civilian: "Slide", undercover: "Transparansi", description: "Media presentasi" },
+            { civilian: "Chart", undercover: "Grafik", description: "Visualisasi data" },
+            { civilian: "Diagram", undercover: "Tabel", description: "Bentuk penyajian data" },
+            { civilian: "Statistik", undercover: "Data", description: "Informasi numerik" },
+            { civilian: "Analisis", undercover: "Interpretasi", description: "Penafsiran data" },
+            { civilian: "Kesimpulan", undercover: "Rekomendasi", description: "Hasil analisis" },
+            { civilian: "Implementasi", undercover: "Penerapan", description: "Pelaksanaan" },
+            { civilian: "Monitoring", undercover: "Pemantauan", description: "Pengawasan" },
+            { civilian: "Evaluasi", undercover: "Penilaian", description: "Pengukuran hasil" },
+            { civilian: "Feedback", undercover: "Umpan balik", description: "Tanggapan" },
+            { civilian: "Improvisasi", undercover: "Inovasi", description: "Peningkatan kreatif" },
+            { civilian: "Eksperimen", undercover: "Percobaan", description: "Uji coba" },
+            { civilian: "Penelitian", undercover: "Riset", description: "Penyelidikan" },
+            { civilian: "Hipotesis", undercover: "Dugaan", description: "Prakiraan ilmiah" },
+            { civilian: "Teori", undercover: "Konsep", description: "Prinsip dasar" },
+            { civilian: "Praktek", undercover: "Aplikasi", description: "Penerapan teori" },
+            { civilian: "Observasi", undercover: "Pengamatan", description: "Pemantauan langsung" },
+            { civilian: "Wawancara", undercover: "Kuesioner", description: "Metode pengumpulan data" },
+            { civilian: "Sampel", undercover: "Populasi", description: "Kelompok penelitian" },
+            { civilian: "Variabel", undercover: "Parameter", description: "Faktor penelitian" },
+            { civilian: "Korelasi", undercover: "Hubungan", description: "Keterkaitan" },
+            { civilian: "Kausalitas", undercover: "Sebab-akibat", description: "Hubungan sebab-akibat" },
+            { civilian: "Validitas", undercover: "Reliabilitas", description: "Keandalan" },
+            { civilian: "Objektif", undercover: "Subjektif", description: "Sudut pandang" },
+            { civilian: "Kuantitatif", undercover: "Kualitatif", description: "Jenis data" },
+            { civilian: "Empiris", undercover: "Teoritis", description: "Berdasarkan pengalaman" },
+            { civilian: "Deduksi", undercover: "Induksi", description: "Metode penalaran" },
+            { civilian: "Sintesis", undercover: "Analisis", description: "Proses pemikiran" },
+            { civilian: "Abstrak", undercover: "Konkret", description: "Tingkat kejelasan" },
+            { civilian: "Kompleks", undercover: "Sederhana", description: "Tingkat kerumitan" },
+            { civilian: "Sistematis", undercover: "Acak", description: "Tingkat keteraturan" },
+            { civilian: "Efisien", undercover: "Efektif", description: "Tingkat keberhasilan" },
+            { civilian: "Optimal", undercover: "Maksimal", description: "Titik terbaik" },
+            { civilian: "Minimum", undercover: "Maksimum", description: "Batas" },
+            { civilian: "Rata-rata", undercover: "Median", description: "Nilai tengah" },
+            { civilian: "Modus", undercover: "Frekuensi", description: "Nilai paling sering" },
+            { civilian: "Range", undercover: "Jangkauan", description: "Selisih nilai" },
+            { civilian: "Deviasi", undercover: "Varians", description: "Penyimpangan" },
+            { civilian: "Distribusi", undercover: "Penyebaran", description: "Pembagian" },
+            { civilian: "Probabilitas", undercover: "Peluang", description: "Kemungkinan" },
+            { civilian: "Kombinasi", undercover: "Permutasi", description: "Penyusunan" },
+            { civilian: "Faktorial", undercover: "Eksponensial", description: "Operasi matematika" },
+            { civilian: "Logaritma", undercover: "Eksponen", description: "Fungsi matematika" },
+            { civilian: "Trigonometri", undercover: "Geometri", description: "Cabang matematika" },
+            { civilian: "Kalkulus", undercover: "Aljabar", description: "Matematika lanjutan" },
+            { civilian: "Matriks", undercover: "Vektor", description: "Struktur matematika" },
+            { civilian: "Persamaan", undercover: "Pertidaksamaan", description: "Hubungan matematika" },
+            { civilian: "Fungsi", undercover: "Relasi", description: "Pemetaan" },
+            { civilian: "Domain", undercover: "Range", description: "Daerah fungsi" },
+            { civilian: "Limit", undercover: "Kontinuitas", description: "Konsep kalkulus" },
+            { civilian: "Turunan", undercover: "Integral", description: "Operasi kalkulus" },
+            { civilian: "Diferensial", undercover: "Kalkulus", description: "Matematika perubahan" },
+            { civilian: "Optimasi", undercover: "Minimasi", description: "Pencarian nilai ekstrem" },
+            { civilian: "Algoritma", undercover: "Program", description: "Langkah-langkah" },
+            { civilian: "Kode", undercover: "Script", description: "Bahasa pemrograman" },
+            { civilian: "Variabel", undercover: "Konstanta", description: "Simbol dalam pemrograman" },
+            { civilian: "Fungsi", undercover: "Prosedur", description: "Blok kode" },
+            { civilian: "Loop", undercover: "Iterasi", description: "Perulangan" },
+            { civilian: "Kondisi", undercover: "Percabangan", description: "Pengambilan keputusan" },
+            { civilian: "Array", undercover: "List", description: "Struktur data" },
+            { civilian: "Object", undercover: "Class", description: "Pemrograman berorientasi objek" },
+            { civilian: "Method", undercover: "Property", description: "Anggota class" },
+            { civilian: "Inheritance", undercover: "Polimorfisme", description: "Konsep OOP" },
+            { civilian: "Encapsulation", undercover: "Abstraksi", description: "Prinsip OOP" },
+            { civilian: "Interface", undercover: "Abstract class", description: "Kontrak dalam OOP" },
+            { civilian: "Exception", undercover: "Error", description: "Kondisi tidak normal" },
+            { civilian: "Debugging", undercover: "Testing", description: "Pencarian bug" },
+            { civilian: "Compiler", undercover: "Interpreter", description: "Penerjemah kode" },
+            { civilian: "Syntax", undercover: "Semantic", description: "Aturan bahasa" },
+            { civilian: "Variable", undercover: "Identifier", description: "Nama dalam kode" },
+            { civilian: "Operator", undercover: "Operand", description: "Simbol operasi" },
+            { civilian: "Expression", undercover: "Statement", description: "Unit kode" },
+            { civilian: "Block", undercover: "Scope", description: "Ruang lingkup" },
+            { civilian: "Parameter", undercover: "Argument", description: "Input fungsi" },
+            { civilian: "Return", undercover: "Output", description: "Nilai balik" },
+            { civilian: "Recursion", undercover: "Iteration", description: "Teknik pemrograman" },
+            { civilian: "Sorting", undercover: "Searching", description: "Algoritma dasar" },
+            { civilian: "Binary", undercover: "Linear", description: "Jenis pencarian" },
+            { civilian: "Bubble", undercover: "Quick", description: "Jenis pengurutan" },
+            { civilian: "Hash", undercover: "Tree", description: "Struktur data" },
+            { civilian: "Graph", undercover: "Network", description: "Struktur kompleks" },
+            { civilian: "Database", undercover: "Table", description: "Penyimpanan data" },
+            { civilian: "Query", undercover: "Command", description: "Permintaan data" },
+            { civilian: "SQL", undercover: "NoSQL", description: "Jenis database" },
+            { civilian: "Relation", undercover: "Attribute", description: "Komponen database" },
+            { civilian: "Primary key", undercover: "Foreign key", description: "Kunci database" },
+            { civilian: "Index", undercover: "Constraint", description: "Optimasi database" },
+            { civilian: "Transaction", undercover: "Commit", description: "Operasi database" },
+            { civilian: "Backup", undercover: "Restore", description: "Proteksi data" },
+            { civilian: "Normalization", undercover: "Denormalization", description: "Desain database" },
+            { civilian: "ORM", undercover: "ODM", description: "Pemetaan objek-relasional" },
+            { civilian: "API", undercover: "Endpoint", description: "Antarmuka aplikasi" },
+            { civilian: "REST", undercover: "GraphQL", description: "Arsitektur API" },
+            { civilian: "JSON", undercover: "XML", description: "Format data" },
+            { civilian: "HTTP", undercover: "HTTPS", description: "Protokol web" },
+            { civilian: "Request", undercover: "Response", description: "Komunikasi client-server" },
+            { civilian: "Client", undercover: "Server", description: "Arsitektur aplikasi" },
+            { civilian: "Frontend", undercover: "Backend", description: "Bagian aplikasi" },
+            { civilian: "UI", undercover: "UX", description: "Desain antarmuka" },
+            { civilian: "HTML", undercover: "CSS", description: "Teknologi web" },
+            { civilian: "JavaScript", undercover: "TypeScript", description: "Bahasa pemrograman web" },
+            { civilian: "Framework", undercover: "Library", description: "Alat pengembangan" },
+            { civilian: "React", undercover: "Vue", description: "Framework frontend" },
+            { civilian: "Angular", undercover: "Svelte", description: "Framework JavaScript" },
+            { civilian: "Node.js", undercover: "Deno", description: "Runtime JavaScript" },
+            { civilian: "Express", undercover: "Koa", description: "Framework backend" },
+            { civilian: "MongoDB", undercover: "MySQL", description: "Jenis database" },
+            { civilian: "Docker", undercover: "Kubernetes", description: "Teknologi container" },
+            { civilian: "Cloud", undercover: "On-premise", description: "Infrastruktur" },
+            { civilian: "AWS", undercover: "Azure", description: "Penyedia cloud" },
+            { civilian: "DevOps", undercover: "Agile", description: "Metodologi pengembangan" },
+            { civilian: "CI/CD", undercover: "Automation", description: "Proses pengembangan" },
+            { civilian: "Git", undercover: "SVN", description: "Version control" },
+            { civilian: "Repository", undercover: "Branch", description: "Konsep Git" },
+            { civilian: "Commit", undercover: "Push", description: "Operasi Git" },
+            { civilian: "Merge", undercover: "Rebase", description: "Penggabungan kode" },
+            { civilian: "Conflict", undercover: "Resolution", description: "Masalah penggabungan" },
+            { civilian: "Pull request", undercover: "Code review", description: "Proses kolaborasi" },
+            { civilian: "Deployment", undercover: "Release", description: "Penerapan aplikasi" },
+            { civilian: "Monitoring", undercover: "Logging", description: "Pemantauan aplikasi" },
+            { civilian: "Performance", undercover: "Scalability", description: "Kualitas aplikasi" },
+            { civilian: "Security", undercover: "Authentication", description: "Keamanan aplikasi" },
+            { civilian: "Encryption", undercover: "Decryption", description: "Proteksi data" },
+            { civilian: "Firewall", undercover: "VPN", description: "Keamanan jaringan" },
+            { civilian: "Malware", undercover: "Virus", description: "Ancaman keamanan" },
+            { civilian: "Backup", undercover: "Recovery", description: "Pemulihan data" },
+            { civilian: "Disaster", undercover: "Contingency", description: "Rencana darurat" },
+            { civilian: "Risk", undercover: "Mitigation", description: "Manajemen risiko" },
+            { civilian: "Compliance", undercover: "Regulation", description: "Kepatuhan" },
+            { civilian: "Audit", undercover: "Certification", description: "Verifikasi" },
+            { civilian: "Standard", undercover: "Protocol", description: "Aturan baku" },
+            { civilian: "Quality", undercover: "Assurance", description: "Jaminan kualitas" },
+            { civilian: "Testing", undercover: "Validation", description: "Pengujian" },
+            { civilian: "Unit test", undercover: "Integration test", description: "Jenis pengujian" },
+            { civilian: "Manual", undercover: "Automated", description: "Metode pengujian" },
+            { civilian: "Bug", undercover: "Defect", description: "Kesalahan program" },
+            { civilian: "Feature", undercover: "Enhancement", description: "Fitur aplikasi" },
+            { civilian: "Requirement", undercover: "Specification", description: "Kebutuhan sistem" },
+            { civilian: "Design", undercover: "Architecture", description: "Rancangan sistem" },
+            { civilian: "Prototype", undercover: "Mockup", description: "Model awal" },
+            { civilian: "Wireframe", undercover: "Storyboard", description: "Desain antarmuka" },
+            { civilian: "Usability", undercover: "Accessibility", description: "Kualitas antarmuka" },
+            { civilian: "Responsive", undercover: "Adaptive", description: "Desain web" },
+            { civilian: "Mobile", undercover: "Desktop", description: "Platform aplikasi" },
+            { civilian: "Native", undercover: "Hybrid", description: "Jenis aplikasi" },
+            { civilian: "iOS", undercover: "Android", description: "Sistem operasi mobile" },
+            { civilian: "Windows", undercover: "macOS", description: "Sistem operasi desktop" },
+            { civilian: "Linux", undercover: "Unix", description: "Sistem operasi open source" },
+            { civilian: "Kernel", undercover: "Shell", description: "Komponen OS" },
+            { civilian: "Process", undercover: "Thread", description: "Eksekusi program" },
+            { civilian: "Memory", undercover: "Storage", description: "Sumber daya komputer" },
+            { civilian: "CPU", undercover: "GPU", description: "Processor" },
+            { civilian: "RAM", undercover: "ROM", description: "Memori komputer" },
+            { civilian: "Hard disk", undercover: "SSD", description: "Penyimpanan data" },
+            { civilian: "Motherboard", undercover: "Chipset", description: "Komponen hardware" },
+            { civilian: "Network", undercover: "Internet", description: "Konektivitas" },
+            { civilian: "Router", undercover: "Switch", description: "Perangkat jaringan" },
+            { civilian: "LAN", undercover: "WAN", description: "Jenis jaringan" },
+            { civilian: "WiFi", undercover: "Ethernet", description: "Teknologi koneksi" },
+            { civilian: "Bluetooth", undercover: "NFC", description: "Koneksi nirkabel" },
+            { civilian: "5G", undercover: "LTE", description: "Generasi jaringan" },
+            { civilian: "IoT", undercover: "Smart device", description: "Perangkat terkoneksi" },
+            { civilian: "AI", undercover: "Machine learning", description: "Kecerdasan buatan" },
+            { civilian: "Neural network", undercover: "Deep learning", description: "Teknik AI" },
+            { civilian: "Algorithm", undercover: "Model", description: "Komponen AI" },
+            { civilian: "Training", undercover: "Testing", description: "Proses ML" },
+            { civilian: "Data", undercover: "Dataset", description: "Bahan ML" },
+            { civilian: "Feature", undercover: "Label", description: "Komponen data" },
+            { civilian: "Classification", undercover: "Regression", description: "Jenis masalah ML" },
+            { civilian: "Clustering", undercover: "Dimensionality reduction", description: "Teknik ML" },
+            { civilian: "Supervised", undercover: "Unsupervised", description: "Jenis pembelajaran" },
+            { civilian: "Reinforcement", undercover: "Semi-supervised", description: "Pembelajaran" },
+            { civilian: "Accuracy", undercover: "Precision", description: "Metrik evaluasi" },
+            { civilian: "Recall", undercover: "F1-score", description: "Pengukuran performa" },
+            { civilian: "Overfitting", undercover: "Underfitting", description: "Masalah ML" },
+            { civilian: "Bias", undercover: "Variance", description: "Error model" },
+            { civilian: "Cross-validation", undercover: "Holdout", description: "Validasi model" },
+            { civilian: "Hyperparameter", undercover: "Parameter", description: "Pengaturan model" },
+            { civilian: "Optimization", undercover: "Regularization", description: "Peningkatan model" },
+            { civilian: "Gradient descent", undercover: "Backpropagation", description: "Algoritma ML" },
+            { civilian: "CNN", undercover: "RNN", description: "Arsitektur neural network" },
+            { civilian: "NLP", undercover: "Computer vision", description: "Aplikasi AI" },
+            { civilian: "Chatbot", undercover: "Virtual assistant", description: "AI conversational" },
+            { civilian: "Robot", undercover: "Automation", description: "Teknologi otomasi" },
+            { civilian: "Drone", undercover: "UAV", description: "Pesawat tanpa awak" },
+            { civilian: "VR", undercover: "AR", description: "Realitas virtual/augmented" },
+            { civilian: "Blockchain", undercover: "Cryptocurrency", description: "Teknologi terdistribusi" },
+            { civilian: "Bitcoin", undercover: "Ethereum", description: "Mata uang kripto" },
+            { civilian: "Smart contract", undercover: "DApp", description: "Aplikasi terdesentralisasi" },
+            { civilian: "Mining", undercover: "Staking", description: "Proses validasi" },
+            { civilian: "Wallet", undercover: "Exchange", description: "Penyimpanan kripto" },
+            { civilian: "NFT", undercover: "Token", description: "Aset digital" },
+            { civilian: "Metaverse", undercover: "Web3", description: "Ekosistem digital" },
+            { civilian: "DAO", undercover: "DeFi", description: "Organisasi terdesentralisasi" },
+            { civilian: "Privacy", undercover: "Anonymity", description: "Perlindungan data" },
+            { civilian: "Transparency", undercover: "Immutability", description: "Sifat blockchain" },
+            { civilian: "Consensus", undercover: "Protocol", description: "Mekanisme blockchain" },
+            { civilian: "Proof of Work", undercover: "Proof of Stake", description: "Algoritma konsensus" },
+            { civilian: "Scalability", undercover: "Throughput", description: "Kinerja blockchain" },
+            { civilian: "Interoperability", undercover: "Cross-chain", description: "Konektivitas blockchain" },
+            { civilian: "Governance", undercover: "Voting", description: "Pengambilan keputusan" },
+            { civilian: "Tokenomics", undercover: "Economics", description: "Ekonomi token" },
+            { civilian: "Liquidity", undercover: "Volatility", description: "Karakteristik pasar" },
+            { civilian: "Bull market", undercover: "Bear market", description: "Kondisi pasar" },
+            { civilian: "Investment", undercover: "Speculation", description: "Motivasi trading" },
+            { civilian: "Portfolio", undercover: "Diversification", description: "Manajemen investasi" },
+            { civilian: "Risk management", undercover: "Hedging", description: "Perlindungan investasi" },
+            { civilian: "Technical analysis", undercover: "Fundamental analysis", description: "Analisis pasar" },
+            { civilian: "Indicator", undercover: "Oscillator", description: "Alat analisis teknis" },
+            { civilian: "Trend", undercover: "Range", description: "Pergerakan harga" },
+            { civilian: "Support", undercover: "Resistance", description: "Level harga" },
+            { civilian: "Breakout", undercover: "Breakdown", description: "Pergerakan harga" },
+            { civilian: "Volume", undercover: "Liquidity", description: "Aktivitas pasar" },
+            { civilian: "Market cap", undercover: "Circulating supply", description: "Metrik kripto" },
+            { civilian: "Whale", undercover: "Retail investor", description: "Pemain pasar" },
+            { civilian: "FOMO", undercover: "FUD", description: "Psikologi pasar" },
+            { civilian: "Pump", undercover: "Dump", description: "Manipulasi pasar" },
+            { civilian: "Rug pull", undercover: "Exit scam", description: "Penipuan kripto" },
+            { civilian: "Regulation", undercover: "Compliance", description: "Kerangka hukum" },
+            { civilian: "Tax", undercover: "Reporting", description: "Kewajiban legal" },
+            { civilian: "KYC", undercover: "AML", description: "Verifikasi identitas" },
+            { civilian: "Security", undercover: "Custody", description: "Penyimpanan aset" },
+            { civilian: "Cold wallet", undercover: "Hot wallet", description: "Jenis dompet" },
+            { civilian: "Private key", undercover: "Seed phrase", description: "Akses dompet" },
+            { civilian: "Hack", undercover: "Exploit", description: "Ancaman keamanan" },
+            { civilian: "Insurance", undercover: "Compensation", description: "Perlindungan kerugian" },
+            { civilian: "Audit", undercover: "Verification", description: "Pemeriksaan keamanan" },
+            { civilian: "Bug bounty", undercover: "White hat", description: "Program keamanan" },
+            { civilian: "Open source", undercover: "Proprietary", description: "Model pengembangan" },
+            { civilian: "Community", undercover: "Ecosystem", description: "Jaringan pengguna" },
+            { civilian: "Partnership", undercover: "Collaboration", description: "Kerja sama" },
+            { civilian: "Adoption", undercover: "Integration", description: "Penerapan teknologi" },
+            { civilian: "Utility", undercover: "Value", description: "Kegunaan produk" },
+            { civilian: "Innovation", undercover: "Disruption", description: "Perubahan teknologi" },
+            { civilian: "Future", undercover: "Vision", description: "Arah perkembangan" },
+            { civilian: "Potential", undercover: "Opportunity", description: "Prospek masa depan" },
+            { civilian: "Challenge", undercover: "Obstacle", description: "Hambatan perkembangan" },
+            { civilian: "Solution", undercover: "Breakthrough", description: "Temuan penting" },
+            { civilian: "Impact", undercover: "Transformation", description: "Dampak perubahan" },
+            { civilian: "Society", undercover: "Culture", description: "Dampak sosial" },
+            { civilian: "Economy", undercover: "Finance", description: "Dampak ekonomi" },
+            { civilian: "Environment", undercover: "Sustainability", description: "Dampak lingkungan" },
+            { civilian: "Ethics", undercover: "Responsibility", description: "Pertimbangan moral" },
+            { civilian: "Privacy", undercover: "Freedom", description: "Hak individu" },
+            { civilian: "Equality", undercover: "Justice", description: "Keadilan sosial" },
+            { civilian: "Democracy", undercover: "Decentralization", description: "Sistem pemerintahan" },
+            { civilian: "Transparency", undercover: "Accountability", description: "Prinsip tata kelola" },
+            { civilian: "Collaboration", undercover: "Cooperation", description: "Bekerja sama" },
+            { civilian: "Competition", undercover: "Innovation", description: "Persaingan sehat" },
+            { civilian: "Progress", undercover: "Development", description: "Kemajuan" },
+            { civilian: "Knowledge", undercover: "Wisdom", description: "Tingkat pemahaman" },
+            { civilian: "Experience", undercover: "Expertise", description: "Pengetahuan praktis" },
+            { civilian: "Creativity", undercover: "Imagination", description: "Kemampuan berinovasi" },
+            { civilian: "Curiosity", undercover: "Exploration", description: "Dorongan belajar" },
+            { civilian: "Persistence", undercover: "Determination", description: "Ketekunan" },
+            { civilian: "Courage", undercover: "Bravery", description: "Keberanian" },
+            { civilian: "Honesty", undercover: "Integrity", description: "Kejujuran" },
+            { civilian: "Compassion", undercover: "Empathy", description: "Kepedulian" },
+            { civilian: "Generosity", undercover: "Kindness", description: "Kemurahan hati" },
+            { civilian: "Gratitude", undercover: "Appreciation", description: "Rasa syukur" },
+            { civilian: "Forgiveness", undercover: "Mercy", description: "Memaafkan" },
+            { civilian: "Humility", undercover: "Modesty", description: "Rendah hati" },
+            { civilian: "Patience", undercover: "Tolerance", description: "Kesabaran" },
+            { civilian: "Resilience", undercover: "Adaptability", description: "Ketahanan" },
+            { civilian: "Optimism", undercover: "Hope", description: "Sikap positif" },
+            { civilian: "Humor", undercover: "Laughter", description: "Keceriaan" },
+            { civilian: "Joy", undercover: "Happiness", description: "Kebahagiaan" },
+            { civilian: "Love", undercover: "Affection", description: "Perasaan sayang" },
+            { civilian: "Friendship", undercover: "Companionship", description: "Persahabatan" },
+            { civilian: "Family", undercover: "Home", description: "Ikatan kekeluargaan" },
+            { civilian: "Community", undercover: "Belonging", description: "Rasa memiliki" },
+            { civilian: "Tradition", undercover: "Heritage", description: "Warisan budaya" },
+            { civilian: "Celebration", undercover: "Festival", description: "Pesta" },
+            { civilian: "Music", undercover: "Dance", description: "Ekspresi seni" },
+            { civilian: "Art", undercover: "Beauty", description: "Estetika" },
+            { civilian: "Nature", undercover: "Wildlife", description: "Alam" },
+            { civilian: "Adventure", undercover: "Exploration", description: "Petualangan" },
+            { civilian: "Travel", undercover: "Journey", description: "Perjalanan" },
+            { civilian: "Discovery", undercover: "Wonder", description: "Penemuan" },
+            { civilian: "Mystery", undercover: "Puzzle", description: "Teka-teki" },
+            { civilian: "Magic", undercover: "Illusion", description: "Sihir" },
+            { civilian: "Fantasy", undercover: "Imagination", description: "Khayalan" },
+            { civilian: "Story", undercover: "Legend", description: "Cerita" },
+            { civilian: "Hero", undercover: "Villain", description: "Tokoh cerita" },
+            { civilian: "Quest", undercover: "Mission", description: "Tugas penting" },
+            { civilian: "Treasure", undercover: "Reward", description: "Hadiah" },
+            { civilian: "Victory", undercover: "Triumph", description: "Kemenangan" },
+            { civilian: "Destiny", undercover: "Fate", description: "Takdir" },
+            { civilian: "Dream", undercover: "Vision", description: "Impian" },
+            { civilian: "Inspiration", undercover: "Motivation", description: "Dorongan" },
+            { civilian: "Passion", undercover: "Enthusiasm", description: "Semangat" },
+            { civilian: "Purpose", undercover: "Meaning", description: "Tujuan hidup" },
+            { civilian: "Legacy", undercover: "Memory", description: "Warisan" },
+            { civilian: "Eternity", undercover: "Infinity", description: "Keabadian" },
+            { civilian: "Universe", undercover: "Cosmos", description: "Alam semesta" },
+            { civilian: "Galaxy", undercover: "Nebula", description: "Gugus bintang" },
+            { civilian: "Planet", undercover: "Star", description: "Benda langit" },
+            { civilian: "Earth", undercover: "World", description: "Planet kita" },
+            { civilian: "Ocean", undercover: "Sea", description: "Lautan" },
+            { civilian: "Mountain", undercover: "Valley", description: "Pegunungan" },
+            { civilian: "Forest", undercover: "Jungle", description: "Hutan" },
+            { civilian: "River", undercover: "Lake", description: "Sungai" },
+            { civilian: "Desert", undercover: "Oasis", description: "Gurun" },
+            { civilian: "Island", undercover: "Continent", description: "Pulau" },
+            { civilian: "City", undercover: "Town", description: "Kota" },
+            { civilian: "Village", undercover: "Hamlet", description: "Desa" },
+            { civilian: "Street", undercover: "Avenue", description: "Jalan" },
+            { civilian: "Building", undercover: "Structure", description: "Bangunan" },
+            { civilian: "House", undercover: "Home", description: "Rumah" },
+            { civilian: "Room", undercover: "Space", description: "Ruang" },
+            { civilian: "Window", undercover: "Door", description: "Akses" },
+            { civilian: "Floor", undercover: "Ceiling", description: "Bagian rumah" },
+            { civilian: "Wall", undercover: "Fence", description: "Pembatas" },
+            { civilian: "Garden", undercover: "Yard", description: "Halaman" },
+            { civilian: "Tree", undercover: "Plant", description: "Tumbuhan" },
+            { civilian: "Flower", undercover: "Blossom", description: "Bunga" },
+            { civilian: "Fruit", undercover: "Vegetable", description: "Buah" },
+            { civilian: "Animal", undercover: "Creature", description: "Hewan" },
+            { civilian: "Bird", undercover: "Fish", description: "Hewan tertentu" },
+            { civilian: "Insect", undercover: "Spider", description: "Serangga" },
+            { civilian: "Pet", undercover: "Companion", description: "Hewan peliharaan" },
+            { civilian: "Wild", undercover: "Tame", description: "Sifat hewan" },
+            { civilian: "Food", undercover: "Drink", description: "Konsumsi" },
+            { civilian: "Meal", undercover: "Feast", description: "Makanan" },
+            { civilian: "Recipe", undercover: "Ingredient", description: "Resep" },
+            { civilian: "Taste", undercover: "Flavor", description: "Rasa" },
+            { civilian: "Smell", undercover: "Aroma", description: "Bau" },
+            { civilian: "Sound", undercover: "Noise", description: "Suara" },
+            { civilian: "Sight", undercover: "Vision", description: "Penglihatan" },
+            { civilian: "Touch", undercover: "Feel", description: "Sentuhan" },
+            { civilian: "Emotion", undercover: "Feeling", description: "Perasaan" },
+            { civilian: "Thought", undercover: "Idea", description: "Pemikiran" },
+            { civilian: "Memory", undercover: "Recollection", description: "Ingatan" },
+            { civilian: "Dream", undercover: "Nightmare", description: "Mimpi" },
+            { civilian: "Reality", undercover: "Fantasy", description: "Kenyataan" },
+            { civilian: "Time", undercover: "Space", description: "Dimensi" },
+            { civilian: "Past", undercover: "Future", description: "Waktu" },
+            { civilian: "Present", undercover: "Moment", description: "Sekarang" },
+            { civilian: "Beginning", undercover: "End", description: "Awal dan akhir" },
+            { civilian: "Life", undercover: "Death", description: "Siklus" },
+            { civilian: "Birth", undercover: "Rebirth", description: "Kelahiran" },
+            { civilian: "Growth", undercover: "Decay", description: "Perkembangan" },
+            { civilian: "Youth", undercover: "Age", description: "Usia" },
+            { civilian: "Health", undercover: "Sickness", description: "Kondisi tubuh" },
+            { civilian: "Strength", undercover: "Weakness", description: "Kekuatan" },
+            { civilian: "Energy", undercover: "Fatigue", description: "Tenaga" },
+            { civilian: "Sleep", undercover: "Wake", description: "Tidur" },
+            { civilian: "Work", undercover: "Rest", description: "Aktivitas" },
+            { civilian: "Play", undercover: "Fun", description: "Hiburan" },
+            { civilian: "Game", undercover: "Sport", description: "Permainan" },
+            { civilian: "Win", undercover: "Lose", description: "Hasil" },
+            { civilian: "Success", undercover: "Failure", description: "Keberhasilan" },
+            { civilian: "Luck", undercover: "Chance", description: "Keberuntungan" },
+            { civilian: "Skill", undercover: "Talent", description: "Kemampuan" },
+            { civilian: "Practice", undercover: "Training", description: "Latihan" },
+            { civilian: "Effort", undercover: "Result", description: "Usaha" },
+            { civilian: "Goal", undercover: "Achievement", description: "Tujuan" },
+            { civilian: "Challenge", undercover: "Opportunity", description: "Tantangan" },
+            { civilian: "Problem", undercover: "Solution", description: "Masalah" },
+            { civilian: "Question", undercover: "Answer", description: "Pertanyaan" },
+            { civilian: "Mystery", undercover: "Secret", description: "Rahasia" },
+            { civilian: "Truth", undercover: "Lie", description: "Kebenaran" },
+            { civilian: "Fact", undercover: "Fiction", description: "Fakta" },
+            { civilian: "Knowledge", undercover: "Ignorance", description: "Pengetahuan" },
+            { civilian: "Wisdom", undercover: "Folly", description: "Kebijaksanaan" },
+            { civilian: "Understanding", undercover: "Confusion", description: "Pemahaman" },
+            { civilian: "Clarity", undercover: "Obscurity", description: "Kejelasan" },
+            { civilian: "Simplicity", undercover: "Complexity", description: "Kesederhanaan" },
+            { civilian: "Order", undercover: "Chaos", description: "Keteraturan" },
+            { civilian: "Peace", undercover: "War", description: "Kedamaian" },
+            { civilian: "Love", undercover: "Hate", description: "Cinta" },
+            { civilian: "Joy", undercover: "Sorrow", description: "Kebahagiaan" },
+            { civilian: "Hope", undercover: "Despair", description: "Harapan" },
+            { civilian: "Courage", undercover: "Fear", description: "Keberanian" },
+            { civilian: "Confidence", undercover: "Doubt", description: "Keyakinan" },
+            { civilian: "Pride", undercover: "Shame", description: "Kebanggaan" },
+            { civilian: "Patience", undercover: "Impatience", description: "Kesabaran" },
+            { civilian: "Kindness", undercover: "Cruelty", description: "Kebaikan" },
+            { civilian: "Generosity", undercover: "Greed", description: "Kemurahan hati" },
+            { civilian: "Honesty", undercover: "Deceit", description: "Kejujuran" },
+            { civilian: "Loyalty", undercover: "Betrayal", description: "Kesetiaan" },
+            { civilian: "Faith", undercover: "Doubt", description: "Keyakinan" },
+            { civilian: "Spirit", undercover: "Soul", description: "Jiwa" },
+            { civilian: "Mind", undercover: "Body", description: "Pikiran" },
+            { civilian: "Heart", undercover: "Brain", description: "Perasaan" },
+            { civilian: "Voice", undercover: "Echo", description: "Suara" },
+            { civilian: "Shadow", undercover: "Light", description: "Bayangan" },
+            { civilian: "Color", undercover: "Hue", description: "Warna" },
+            { civilian: "Shape", undercover: "Form", description: "Bentuk" },
+            { civilian: "Size", undercover: "Scale", description: "Ukuran" },
+            { civilian: "Weight", undercover: "Mass", description: "Berat" },
+            { civilian: "Texture", undercover: "Surface", description: "Tekstur" },
+            { civilian: "Pattern", undercover: "Design", description: "Pola" },
+            { civilian: "Rhythm", undercover: "Beat", description: "Irama" },
+            { civilian: "Melody", undercover: "Harmony", description: "Melodi" },
+            { civilian: "Song", undercover: "Music", description: "Lagu" },
+            { civilian: "Dance", undercover: "Movement", description: "Tarian" },
+            { civilian: "Art", undercover: "Craft", description: "Seni" },
+            { civilian: "Poetry", undercover: "Prose", description: "Puisi" },
+            { civilian: "Story", undercover: "Plot", description: "Cerita" },
+            { civilian: "Character", undercover: "Personality", description: "Tokoh" },
+            { civilian: "Scene", undercover: "Setting", description: "Adegan" },
+            { civilian: "Theme", undercover: "Motif", description: "Tema" },
+            { civilian: "Symbol", undercover: "Metaphor", description: "Simbol" },
+            { civilian: "Meaning", undercover: "Significance", description: "Makna" },
+            { civilian: "Beauty", undercover: "Ugliness", description: "Keindahan" },
+            { civilian: "Grace", undercover: "Elegance", description: "Keanggunan" },
+            { civilian: "Power", undercover: "Strength", description: "Kekuasaan" },
+            { civilian: "Control", undercover: "Freedom", description: "Kendali" },
+            { civilian: "Rule", undercover: "Law", description: "Aturan" },
+            { civilian: "Justice", undercover: "Fairness", description: "Keadilan" },
+            { civilian: "Right", undercover: "Wrong", description: "Benar" },
+            { civilian: "Good", undercover: "Evil", description: "Kebaikan" },
+            { civilian: "Virtue", undercover: "Vice", description: "Kebajikan" },
+            { civilian: "Angel", undercover: "Demon", description: "Malaikat" },
+            { civilian: "Heaven", undercover: "Hell", description: "Surga" },
+            { civilian: "God", undercover: "Goddess", description: "Tuhan" },
+            { civilian: "Prayer", undercover: "Worship", description: "Doa" },
+            { civilian: "Faith", undercover: "Belief", description: "Iman" },
+            { civilian: "Miracle", undercover: "Magic", description: "Mukjizat" },
+            { civilian: "Destiny", undercover: "Fate", description: "Takdir" },
+            { civilian: "Karma", undercover: "Destiny", description: "Hukum sebab-akibat" },
+            { civilian: "Reincarnation", undercover: "Rebirth", description: "Kelahiran kembali" },
+            { civilian: "Enlightenment", undercover: "Wisdom", description: "Pencerahan" },
+            { civilian: "Nirvana", undercover: "Heaven", description: "Keadaan sempurna" },
+            { civilian: "Meditation", undercover: "Contemplation", description: "Meditasi" },
+            { civilian: "Yoga", undercover: "Exercise", description: "Latihan" },
+            { civilian: "Peace", undercover: "Serenity", description: "Kedamaian" },
+            { civilian: "Bliss", undercover: "Joy", description: "Kebahagiaan" },
+            { civilian: "Love", undercover: "Compassion", description: "Cinta" },
+            { civilian: "Unity", undercover: "Harmony", description: "Persatuan" },
+            { civilian: "Balance", undercover: "Equilibrium", description: "Keseimbangan" },
+            { civilian: "Cycle", undercover: "Circle", description: "Siklus" },
+            { civilian: "Flow", undercover: "Current", description: "Aliran" },
+            { civilian: "Wave", undercover: "Particle", description: "Gelombang" },
+            { civilian: "Energy", undercover: "Matter", description: "Energi" },
+            { civilian: "Atom", undercover: "Molecule", description: "Partikel" },
+            { civilian: "Cell", undercover: "Organism", description: "Sel" },
+            { civilian: "Plant", undercover: "Animal", description: "Tumbuhan" },
+            { civilian: "Human", undercover: "Being", description: "Manusia" },
+            { civilian: "Society", undercover: "Community", description: "Masyarakat" },
+            { civilian: "Culture", undercover: "Civilization", description: "Budaya" },
+            { civilian: "History", undercover: "Heritage", description: "Sejarah" },
+            { civilian: "Tradition", undercover: "Custom", description: "Tradisi" },
+            { civilian: "Language", undercover: "Communication", description: "Bahasa" },
+            { civilian: "Word", undercover: "Meaning", description: "Kata" },
+            { civilian: "Sound", undercover: "Symbol", description: "Bunyi" },
+            { civilian: "Letter", undercover: "Alphabet", description: "Huruf" },
+            { civilian: "Number", undercover: "Digit", description: "Angka" },
+            { civilian: "Math", undercover: "Calculation", description: "Matematika" },
+            { civilian: "Science", undercover: "Knowledge", description: "Ilmu" },
+            { civilian: "Discovery", undercover: "Invention", description: "Penemuan" },
+            { civilian: "Technology", undercover: "Innovation", description: "Teknologi" },
+            { civilian: "Future", undercover: "Progress", description: "Masa depan" },
+            { civilian: "Hope", undercover: "Dream", description: "Harapan" },
+            { civilian: "Imagination", undercover: "Creativity", description: "Imajinasi" },
+            { civilian: "Possibility", undercover: "Potential", description: "Kemungkinan" },
+            { civilian: "Opportunity", undercover: "Chance", description: "Peluang" },
+            { civilian: "Success", undercover: "Achievement", description: "Keberhasilan" },
+            { civilian: "Happiness", undercover: "Fulfillment", description: "Kebahagiaan" },
+            { civilian: "Love", undercover: "Connection", description: "Cinta" },
+            { civilian: "Friendship", undercover: "Companionship", description: "Persahabatan" },
+            { civilian: "Family", undercover: "Home", description: "Keluarga" },
+            { civilian: "Community", undercover: "Togetherness", description: "Komunitas" },
+            { civilian: "World", undercover: "Universe", description: "Dunia" },
+            { civilian: "Life", undercover: "Existence", description: "Kehidupan" },
+            { civilian: "Beauty", undercover: "Wonder", description: "Keindahan" },
+            { civilian: "Mystery", undercover: "Magic", description: "Misteri" },
+            { civilian: "Adventure", undercover: "Journey", description: "Petualangan" },
+            { civilian: "Game", undercover: "Play", description: "Permainan" },
+            { civilian: "Fun", undercover: "Joy", description: "Kesenangan" },
+            { civilian: "Laughter", undercover: "Smile", description: "Tawa" },
+            { civilian: "Undercover", undercover: "Secret", description: "Menyamar" },
+            { civilian: "Mr. White", undercover: "Mystery", description: "Teka-teki" }
+        ];
         
         // Buat elemen floating untuk efek visual
         function createFloatingElements() {
@@ -493,8 +1298,15 @@
             }
         }
         
-        // Generate kartu peran
-        function generateRoleCards() {
+        // Pilih kata kunci secara acak
+        function selectRandomWords() {
+            const randomIndex = Math.floor(Math.random() * wordList.length);
+            civilianWord = wordList[randomIndex].civilian;
+            undercoverWord = wordList[randomIndex].undercover;
+        }
+        
+        // Generate peran untuk pemain
+        function assignRoles() {
             const mrWhiteCount = parseInt(mrWhiteCountInput.value);
             const undercoverCount = parseInt(undercoverCountInput.value);
             const civilianCount = players.length - mrWhiteCount - undercoverCount;
@@ -524,45 +1336,40 @@
             players.forEach((player, index) => {
                 player.role = roles[index];
             });
+        }
+        
+        // Tampilkan peran pemain saat ini
+        function showCurrentPlayerRole() {
+            const currentPlayer = players[currentPlayerIndex];
             
-            // Kosongkan container kartu
-            cardsContainer.innerHTML = '';
+            // Update tampilan dengan nama pemain saat ini
+            currentPlayerName.textContent = `Sekarang Giliran: ${currentPlayer.name}`;
+            turnPlayerName.textContent = currentPlayer.name;
+            turnPlayerNameBack.textContent = currentPlayer.name;
             
-            // Buat kartu untuk setiap pemain
-            players.forEach((player, index) => {
-                const card = document.createElement('div');
-                card.classList.add('card');
-                card.dataset.playerId = player.id;
-                card.innerHTML = `
-                    <div class="card-inner">
-                        <div class="card-front">
-                            <div class="role-icon">?</div>
-                            <div class="player-name">${player.name}</div>
-                            <div class="role-desc">Klik untuk melihat peran</div>
-                        </div>
-                        <div class="card-back ${player.role}">
-                            <div class="role-icon">${getRoleIcon(player.role)}</div>
-                            <div class="role-name">${getRoleName(player.role)}</div>
-                            <div class="player-name">${player.name}</div>
-                            <div class="role-desc">${getRoleDescription(player.role)}</div>
-                        </div>
-                    </div>
-                `;
-                
-                card.addEventListener('click', () => {
-                    if (!card.classList.contains('flipped') && !player.revealed) {
-                        card.classList.add('flipped');
-                        player.revealed = true;
-                        
-                        // Set timeout untuk menonaktifkan kartu setelah beberapa detik
-                        setTimeout(() => {
-                            card.classList.add('disabled');
-                        }, 2000);
-                    }
-                });
-                
-                cardsContainer.appendChild(card);
-            });
+            // Update peran
+            turnRoleIcon.textContent = getRoleIcon(currentPlayer.role);
+            turnRoleName.textContent = getRoleName(currentPlayer.role);
+            turnRoleDesc.textContent = getRoleDescription(currentPlayer.role);
+            
+            // Update kelas untuk styling peran
+            const cardBack = document.querySelector('#turnPlayerRole');
+            cardBack.className = 'card-back ' + currentPlayer.role;
+            
+            // Tampilkan clue berdasarkan peran
+            if (currentPlayer.role === 'civilian') {
+                clueText.textContent = civilianWord;
+                clueDescription.textContent = "Ini adalah kata kunci Anda. Jangan beri tahu Mr. White!";
+            } else if (currentPlayer.role === 'undercover') {
+                clueText.textContent = undercoverWord;
+                clueDescription.textContent = "Ini adalah kata kunci Anda. Kata ini mirip dengan kata Civilian, tapi tidak sama!";
+            } else {
+                clueText.textContent = "???";
+                clueDescription.textContent = "Anda tidak tahu kata kunci. Tugas Anda adalah menebak kata Civilian!";
+            }
+            
+            // Reset kartu ke posisi tertutup
+            currentPlayerCard.classList.remove('flipped');
         }
         
         // Fungsi untuk mengacak array
@@ -616,9 +1423,12 @@
         startGameBtn.addEventListener('click', () => {
             if (validatePlayerNames()) {
                 savePlayerNames();
+                assignRoles();
+                selectRandomWords();
                 nameInputSection.classList.add('hidden');
-                gameSection.classList.remove('hidden');
-                generateRoleCards();
+                playerTurnSection.classList.remove('hidden');
+                currentPlayerIndex = 0;
+                showCurrentPlayerRole();
             }
         });
         
@@ -627,10 +1437,35 @@
             setupSection.classList.remove('hidden');
         });
         
+        nextPlayerBtn.addEventListener('click', () => {
+            // Tandai pemain saat ini sudah melihat perannya
+            players[currentPlayerIndex].revealed = true;
+            
+            // Lanjut ke pemain berikutnya
+            currentPlayerIndex++;
+            
+            // Jika masih ada pemain yang belum melihat perannya
+            if (currentPlayerIndex < players.length) {
+                showCurrentPlayerRole();
+            } else {
+                // Semua pemain sudah melihat peran, lanjut ke fase permainan
+                playerTurnSection.classList.add('hidden');
+                gameSection.classList.remove('hidden');
+            }
+        });
+        
         resetGameBtn.addEventListener('click', () => {
             gameSection.classList.add('hidden');
             setupSection.classList.remove('hidden');
             players = [];
+            currentPlayerIndex = 0;
+        });
+        
+        // Klik kartu untuk membalik
+        currentPlayerCard.addEventListener('click', () => {
+            if (!currentPlayerCard.classList.contains('flipped')) {
+                currentPlayerCard.classList.add('flipped');
+            }
         });
         
         // Inisialisasi
