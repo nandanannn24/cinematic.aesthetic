@@ -1,25 +1,65 @@
-.card3d {
-  perspective: 1200px;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at center, #0f0f1a, #050509, #000000);
+  color: #e0d4ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
-.card-inner {
-  transition: transform 1s;
-  transform-style: preserve-3d;
+
+.container {
+  text-align: center;
+  background: rgba(20, 10, 40, 0.7);
+  padding: 50px;
+  border-radius: 15px;
+  box-shadow: 0 0 40px rgba(150, 0, 255, 0.6);
+  animation: fadeIn 2s ease-in-out;
 }
-.card-inner.flip {
-  transform: rotateY(180deg);
+
+.title {
+  font-size: 3rem;
+  color: #c19bf5;
+  text-shadow: 0 0 15px #d9a7ff, 0 0 30px gold;
+  animation: glow 2s infinite alternate;
 }
-.face {
-  backface-visibility: hidden;
-  border-radius: 16px;
-  box-shadow: 0 0 30px rgba(255,215,0,0.3);
+
+.desc {
+  font-size: 1.1rem;
+  margin: 20px 0;
+  color: #e6e6fa;
 }
-.face.front {
-  background: linear-gradient(135deg, #3e0b6e, #120024);
-  color: gold;
-  font-family: 'Cinzel Decorative', serif;
+
+.btn {
+  background: linear-gradient(90deg, #7b2ff7, #f107a3);
+  color: white;
+  font-size: 1.2rem;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.face.back {
-  background: linear-gradient(135deg, #120024, #3e0b6e);
-  color: #fff;
-  transform: rotateY(180deg);
+
+.btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 1);
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #9b59b6, 0 0 20px #9b59b6, 0 0 30px gold;
+  }
+  to {
+    text-shadow: 0 0 20px #8e44ad, 0 0 40px gold, 0 0 60px #8e44ad;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
