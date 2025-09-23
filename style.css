@@ -1,105 +1,67 @@
 body {
-  margin: 0;
-  padding: 0;
   font-family: 'Poppins', sans-serif;
-  background: radial-gradient(circle at center, #0d001a, #1a0026, #000);
-  color: #fff;
-  overflow: hidden;
-}
-
-.slide {
-  display: none;
-  height: 100vh;
-  width: 100vw;
+  background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+  color: white;
   text-align: center;
-  padding: 40px;
-  box-sizing: border-box;
-  animation: fadeIn 1s ease-in-out;
-}
-
-.active {
-  display: block;
-}
-
-.title {
-  font-size: 3rem;
-  color: #c19bf5;
-  text-shadow: 0 0 20px gold, 0 0 40px #a020f0;
-  margin-top: 100px;
-}
-
-.desc {
-  font-size: 1.2rem;
-  margin: 20px 0;
-}
-
-.btn {
-  background: linear-gradient(90deg, #7b2ff7, #f107a3);
-  border: none;
-  padding: 12px 25px;
-  margin: 10px;
-  font-size: 1.1rem;
-  border-radius: 25px;
-  cursor: pointer;
-  color: #fff;
-  box-shadow: 0 0 15px gold;
-  transition: transform 0.2s;
-}
-
-.btn:hover {
-  transform: scale(1.1);
-}
-
-#playerList {
-  list-style: none;
-  padding: 0;
-  margin: 20px auto;
-  color: #fff8dc;
-}
-
-.card3d {
-  width: 300px;
-  height: 400px;
-  perspective: 1000px;
-  margin: 100px auto;
-  cursor: pointer;
-}
-
-.card3d .front, .card3d .back {
-  width: 100%;
-  height: 100%;
-  border-radius: 15px;
-  position: absolute;
-  backface-visibility: hidden;
-  transition: transform 1s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.front {
-  background: linear-gradient(135deg, #2c003e, #1a001f);
-  color: #fff;
-  box-shadow: 0 0 20px #a020f0, 0 0 40px gold;
-}
-
-.back {
-  background: linear-gradient(135deg, #3e005c, #2c003e);
-  color: #ffd700;
-  transform: rotateY(180deg);
+  min-height: 100vh;
   padding: 20px;
 }
 
-.card3d.flipped .front {
-  transform: rotateY(180deg);
+.title {
+  margin-bottom: 20px;
+  color: #ff4444;
+  text-shadow: 0 0 20px red;
 }
 
-.card3d.flipped .back {
-  transform: rotateY(360deg);
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 20px auto;
+  max-width: 900px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.card {
+  width: 120px;
+  height: 180px;
+  background: url("kartu.png") no-repeat center/cover;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  transition: 0.4s;
+  box-shadow: 0 0 15px rgba(255,255,255,0.1);
+}
+
+.card.active {
+  border: 3px solid #00ff88;
+  box-shadow: 0 0 30px #00ff88, 0 0 60px #00ff88;
+  transform: scale(1.15);
+}
+
+.controls {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #ff4444;
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+}
+button:hover {
+  background: #ff7777;
+  transform: scale(1.05);
 }
