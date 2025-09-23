@@ -2,53 +2,47 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Poppins', sans-serif;
-  background: radial-gradient(circle at center, #0f0f1a, #050509, #000000);
-  color: #e0d4ff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  background: radial-gradient(circle at center, #0d001a, #1a0026, #000);
+  color: #fff;
   overflow: hidden;
 }
 
-.page {
+.slide {
   display: none;
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-.page.active {
-  display: flex;
-}
-
-.container {
+  height: 100vh;
+  width: 100vw;
   text-align: center;
-  background: rgba(20, 10, 40, 0.7);
   padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 0 40px rgba(150, 0, 255, 0.6);
+  box-sizing: border-box;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.active {
+  display: block;
 }
 
 .title {
   font-size: 3rem;
   color: #c19bf5;
-  text-shadow: 0 0 20px #d9a7ff, 0 0 40px gold;
+  text-shadow: 0 0 20px gold, 0 0 40px #a020f0;
+  margin-top: 100px;
 }
 
 .desc {
+  font-size: 1.2rem;
   margin: 20px 0;
 }
 
 .btn {
   background: linear-gradient(90deg, #7b2ff7, #f107a3);
-  color: white;
-  font-size: 1rem;
-  padding: 12px 25px;
   border: none;
+  padding: 12px 25px;
+  margin: 10px;
+  font-size: 1.1rem;
   border-radius: 25px;
   cursor: pointer;
+  color: #fff;
+  box-shadow: 0 0 15px gold;
   transition: transform 0.2s;
 }
 
@@ -56,53 +50,56 @@ body {
   transform: scale(1.1);
 }
 
-/* Kartu Tarot */
-.card-container {
-  perspective: 1000px;
-  text-align: center;
+#playerList {
+  list-style: none;
+  padding: 0;
+  margin: 20px auto;
+  color: #fff8dc;
 }
 
-.card {
-  width: 250px;
-  height: 350px;
-  margin: auto;
+.card3d {
+  width: 300px;
+  height: 400px;
   perspective: 1000px;
-}
-
-.card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 1s;
-  transform-style: preserve-3d;
+  margin: 100px auto;
   cursor: pointer;
 }
 
-.card.flipped .card-inner {
-  transform: rotateY(180deg);
-}
-
-.card-front, .card-back {
-  position: absolute;
+.card3d .front, .card3d .back {
   width: 100%;
   height: 100%;
-  backface-visibility: hidden;
   border-radius: 15px;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+  position: absolute;
+  backface-visibility: hidden;
+  transition: transform 1s;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  align-items: center;
+  flex-direction: column;
 }
 
-.card-front {
-  background: linear-gradient(145deg, #2a003f, #0b001a);
-  color: #e0d4ff;
+.front {
+  background: linear-gradient(135deg, #2c003e, #1a001f);
+  color: #fff;
+  box-shadow: 0 0 20px #a020f0, 0 0 40px gold;
 }
 
-.card-back {
-  background: linear-gradient(145deg, #1c0030, #35004f);
-  color: gold;
+.back {
+  background: linear-gradient(135deg, #3e005c, #2c003e);
+  color: #ffd700;
   transform: rotateY(180deg);
   padding: 20px;
+}
+
+.card3d.flipped .front {
+  transform: rotateY(180deg);
+}
+
+.card3d.flipped .back {
+  transform: rotateY(360deg);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
