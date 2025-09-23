@@ -1,1 +1,25 @@
-
+.card3d {
+  perspective: 1200px;
+}
+.card-inner {
+  transition: transform 1s;
+  transform-style: preserve-3d;
+}
+.card-inner.flip {
+  transform: rotateY(180deg);
+}
+.face {
+  backface-visibility: hidden;
+  border-radius: 16px;
+  box-shadow: 0 0 30px rgba(255,215,0,0.3);
+}
+.face.front {
+  background: linear-gradient(135deg, #3e0b6e, #120024);
+  color: gold;
+  font-family: 'Cinzel Decorative', serif;
+}
+.face.back {
+  background: linear-gradient(135deg, #120024, #3e0b6e);
+  color: #fff;
+  transform: rotateY(180deg);
+}
