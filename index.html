@@ -7,13 +7,26 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1 class="title">UNDERCOVER</h1>
-    <p class="desc">
-      Misteri, tawa, dan curiga — main aman buat tongkrongan 18+ (tanpa jorok).<br>
-      Ungu mistis + gold glow. Klik mulai kalau siap.
-    </p>
-    <button id="startBtn" class="btn">Mulai</button>
+  <!-- Halaman Intro -->
+  <div class="page active" id="intro">
+    <div class="container">
+      <h1 class="title">UNDERCOVER</h1>
+      <p class="desc">Misteri, tawa, dan curiga — siap main?<br>18+ vibes mistis (tanpa jorok).</p>
+      <button id="startBtn" class="btn">Mulai</button>
+    </div>
+  </div>
+
+  <!-- Halaman Kartu -->
+  <div class="page" id="cards">
+    <div class="card-container">
+      <div class="card" id="card">
+        <div class="card-inner">
+          <div class="card-front">❖ Klik untuk buka ❖</div>
+          <div class="card-back" id="cardContent">Civil: Clue contoh</div>
+        </div>
+      </div>
+      <button id="nextBtn" class="btn">Next</button>
+    </div>
   </div>
 
   <script src="script.js"></script>
