@@ -6,6 +6,7 @@
     <title>Undercover</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=MedievalSharp&display=swap" rel="stylesheet">
     <style>
+        /* Semua style CSS sebelumnya tetap sama */
         * {
             margin: 0;
             padding: 0;
@@ -503,6 +504,51 @@
             to { opacity: 0; visibility: hidden; }
         }
 
+        /* Tambahan style untuk elemen eliminasi */
+        .eliminated {
+            opacity: 0.6;
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .voting-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(42, 21, 74, 0.6);
+            border: 1px solid #6b4e9e;
+            border-radius: 8px;
+        }
+
+        .vote-btn {
+            margin: 5px;
+            padding: 8px 15px;
+            background: rgba(27, 15, 48, 0.8);
+            border: 1px solid #6b4e9e;
+            border-radius: 5px;
+            color: #f0e6d2;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vote-btn:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 5px #d4af37;
+        }
+
+        .vote-btn.selected {
+            background: rgba(212, 175, 55, 0.3);
+            border-color: #d4af37;
+            box-shadow: 0 0 8px #d4af37;
+        }
+
+        .mr-white-guess {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(27, 15, 48, 0.8);
+            border: 1px solid #d4af37;
+            border-radius: 5px;
+        }
+
         /* Responsif */
         @media (max-width: 768px) {
             .game-title {
@@ -562,20 +608,14 @@
             <h1 class="game-title glow">UNDERCOVER</h1>
             <p class="subtitle">Game e Arek-Arek</p>
         </div>
+        
+        <!-- Halaman 1: Persiapan Permainan -->
         <div class="page active" id="page1">
             <h2 class="section-title">Persiapan Permainan</h2>
             
             <div class="input-group">
                 <label for="playerCount">Jumlah Pemain (3-10):</label>
                 <input type="number" id="playerCount" min="3" max="10" value="5">
-            </div>
-            
-            <div class="input-group">
-                <label for="mrWhiteCount">Jumlah Mr. White:</label>
-                <select id="mrWhiteCount">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                </select>
             </div>
             
             <div class="input-group">
@@ -587,38 +627,36 @@
                 </select>
             </div>
             
+            <div class="input-group">
+                <label for="mrWhiteCount">Jumlah Mr. White:</label>
+                <select id="mrWhiteCount">
+                    <option value="0">0</option>
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                </select>
+            </div>
+            
             <div class="actions">
                 <button class="btn" id="nextToPage2">Lanjutkan</button>
             </div>
         </div>
+        
+        <!-- Halaman 2: Input Nama Pemain -->
         <div class="page" id="page2">
             <h2 class="section-title">Masukkan Nama Pemain</h2>
             
-            <div id="playerNames">
-            </div>
-            
-            <div class="actions">
-                <button class="btn btn-secondary" id="backToPage1">Kembali</button>
-                <button class="btn" id="nextToPage3">Lanjutkan</button>
-            </div>
-        </div>
-        <div class="page" id="page3">
-            <h2 class="section-title">Peran Pemain</h2>
-            
             <div class="player-frame">
-                <div class="player-turn" id="currentPlayerTurn">Giliran: Nanda</div>
+                <div class="player-turn" id="currentPlayerTurn">Pemain 1</div>
             </div>
             
             <div class="card-container">
-                <div class="card" id="roleCard">
+                <div class="card" id="nameCard">
                     <div class="card-front">
-                        <div class="player-name" id="cardPlayerName">Nanda</div>
-                        <p class="instruction">Klik untuk membuka kartu</p>
-                    </div>
-                    <div class="card-back">
-                        <div class="role-title" id="cardRole">Civilian</div>
-                        <div class="clue-text" id="cardClue">Gunung</div>
-                        <p class="instruction">Jangan tunjukkan ke pemain lain!</p>
+                        <div class="player-name">Pemain <span id="playerNumber">1</span></div>
+                        <div class="input-group" style="margin-top: 20px;">
+                            <input type="text" id="playerNameInput" placeholder="Masukkan nama">
+                        </div>
+                        <p class="instruction">Klik "Simpan & Lanjut" setelah memasukkan nama</p>
                     </div>
                 </div>
             </div>
@@ -626,70 +664,141 @@
             <div class="note-box">
                 <div class="note-title">Catatan Penting:</div>
                 <ul>
-                    <li>Civilian: Dapatkan clue dan tebak siapa Undercover</li>
-                    <li>Undercover: Clue Anda mirip dengan Civilian, jangan sampai ketahuan!</li>
-                    <li>Mr. White: Tidak dapat clue, tebak clue yang diberikan Civilian</li>
+                    <li>Masukkan nama untuk setiap pemain secara bergiliran</li>
+                    <li>Nama ini akan digunakan selama permainan</li>
+                    <li>Setelah semua nama dimasukkan, permainan akan dimulai</li>
                 </ul>
             </div>
             
             <div class="actions">
-                <button class="btn btn-secondary" id="backToPage2">Kembali</button>
-                <button class="btn" id="nextPlayerRole" disabled>Pemain Berikutnya</button>
-                <button class="btn" id="nextToPage4" style="display:none;">Lanjut ke Permainan</button>
+                <button class="btn btn-secondary" id="backToPage1">Kembali</button>
+                <button class="btn" id="nextPlayerName">Simpan & Lanjut</button>
+                <button class="btn" id="nextToPage3" style="display:none;">Konfirmasi Nama</button>
             </div>
         </div>
-        <div class="page" id="page4">
-            <h2 class="section-title">Lobby Permainan</h2>
+        
+        <!-- Halaman 3: Konfirmasi Nama Pemain -->
+        <div class="page" id="page3">
+            <h2 class="section-title">Konfirmasi Nama Pemain</h2>
             
             <div class="player-frame">
-                <div class="player-turn">Giliran pertama: <span id="firstPlayerName">Nanda</span></div>
-            </div>
-            <div id="lobbyPlayers">
+                <div class="player-turn">Daftar Pemain</div>
             </div>
             
+            <div id="playerList"></div>
+            
             <div class="note-box">
-                <div class="note-title">Instruksi Permainan:</div>
-                <p>Pemain pertama akan memulai permainan dengan memberikan deskripsi tentang clue mereka tanpa menyebutkan kata kunci. Pemain lain akan bergiliran memberikan deskripsi. Tujuannya adalah untuk menemukan Undercover atau Mr. White.</p>
+                <div class="note-title">Konfirmasi:</div>
+                <p>Periksa kembali nama-nama pemain. Jika sudah benar, klik "Lanjut ke Clue". Jika ingin mengubah nama, klik "Kembali ke Edit Nama".</p>
             </div>
             
             <div class="actions">
-                <button class="btn btn-secondary" id="backToPage3">Kembali</button>
-                <button class="btn" id="startGame">Mulai Permainan</button>
+                <button class="btn btn-secondary" id="backToPage2">Kembali ke Edit Nama</button>
+                <button class="btn" id="nextToPage4">Lanjut ke Clue</button>
             </div>
         </div>
-        <div class="page" id="page5">
-            <div class="player-frame">
-                <h2 class="section-title">Permainan Berlangsung</h2>
-                <div class="player-turn" id="gameCurrentPlayer">Giliran: Nanda</div>
-            </div>
+        
+        <!-- Halaman 4: Clue Pemain -->
+        <div class="page" id="page4">
+            <h2 class="section-title">Clue Pemain</h2>
             
-            <div class="players-list" id="gamePlayersList">
+            <div class="player-frame">
+                <div class="player-turn" id="currentPlayerClueTurn">Giliran: Pemain 1</div>
             </div>
             
             <div class="card-container">
-                <div class="card" id="gameCard">
+                <div class="card" id="clueCard">
                     <div class="card-front">
-                        <div class="player-name" id="gameCardPlayerName">Nanda</div>
-                        <p class="instruction">Klik untuk melihat peran dan clue</p>
+                        <div class="player-name" id="clueCardPlayerName">Pemain 1</div>
+                        <p class="instruction">Klik untuk membuka clue</p>
                     </div>
                     <div class="card-back">
-                        <div class="role-title" id="gameCardRole">Civilian</div>
-                        <div class="clue-text" id="gameCardClue">Gunung</div>
-                        <p class="instruction">Jangan tunjukkan ke pemain lain!</p>
+                        <div class="player-name" id="backClueCardPlayerName">Pemain 1</div>
+                        <div class="clue-text" id="clueCardClue">Gunung</div>
+                        <p class="instruction">Ingat clue Anda!</p>
                     </div>
                 </div>
             </div>
             
+            <div class="note-box">
+                <div class="note-title">Catatan Penting:</div>
+                <ul>
+                    <li>Setiap pemain mendapatkan clue yang harus diingat</li>
+                    <li>Beberapa pemain mungkin memiliki clue yang sedikit berbeda</li>
+                    <li>Tugas Anda adalah mencari tahu siapa yang memiliki clue berbeda</li>
+                </ul>
+            </div>
+            
             <div class="actions">
-                <button class="btn btn-secondary" id="prevGamePlayer" disabled>Pemain Sebelumnya</button>
-                <button class="btn" id="nextGamePlayer" disabled>Pemain Berikutnya</button>
-                <button class="btn btn-secondary" id="endGame">Akhiri Permainan</button>
+                <button class="btn btn-secondary" id="backToPage3">Kembali</button>
+                <button class="btn" id="nextPlayerClue" disabled>Pemain Berikutnya</button>
+                <button class="btn" id="nextToPage5" style="display:none;">Lanjut ke Permainan</button>
+            </div>
+        </div>
+        
+        <!-- Halaman 5: Lobby Permainan -->
+        <div class="page" id="page5">
+            <h2 class="section-title">LOBBY PERMAINAN</h2>
+            
+            <div class="player-frame">
+                <div class="player-turn">STATUS PERMAINAN: <span id="gameStatus">ROUND 1</span></div>
+            </div>
+            
+            <div id="lobbyPlayers"></div>
+            
+            <!-- Bagian Voting -->
+            <div class="voting-section" id="votingSection">
+                <h3 class="section-title">VOTING</h3>
+                <p>PILIH PEMAIN YANG MENURUT ANDA ADALAH UNDERCOVER:</p>
+                <div id="votingOptions"></div>
+                <div class="actions">
+                    <button class="btn" id="submitVote" disabled>SUBMIT VOTE</button>
+                </div>
+            </div>
+            
+            <!-- Area untuk Mr. White menebak clue -->
+            <div class="mr-white-guess" id="mrWhiteGuess" style="display:none;">
+                <h3 class="section-title">Mr. White Menebak Clue</h3>
+                <p>Anda telah memilih Mr. White. Mr. White harus menebak clue yang benar dari Civilian:</p>
+                <input type="text" id="mrWhiteGuessInput" placeholder="Masukkan tebakan clue">
+                <div class="actions">
+                    <button class="btn" id="submitMrWhiteGuess">Submit Tebakan</button>
+                </div>
+            </div>
+            
+            <div class="note-box">
+                <div class="note-title">INSTRUKSI PERMAINAN:</div>
+                <p>PILIH PEMAIN YANG MENURUT ANDA ADALAH UNDERCOVER. JIKA YANG TERPILIH ADALAH MR. WHITE, DIA HARUS MENEBAK CLUE YANG BENAR. JIKA YANG TERPILIH ADALAH UNDERCOVER, DIA AKAN TERELIMINASI.</p>
+            </div>
+            
+            <div class="actions">
+                <button class="btn btn-secondary" id="backToPage4">KEMBALI</button>
+            </div>
+        </div>
+        
+        <!-- Halaman 6: Game Over -->
+        <div class="page" id="page6">
+            <h2 class="section-title">Permainan Selesai</h2>
+            
+            <div class="player-frame">
+                <div class="player-turn" id="winnerAnnouncement">Pemenang: Civilian</div>
+            </div>
+            
+            <div class="note-box">
+                <div class="note-title">Hasil Permainan:</div>
+                <div id="gameResults"></div>
+            </div>
+            
+            <div class="actions">
+                <button class="btn" id="playAgainSameNames">Main Lagi (Nama Sama)</button>
+                <button class="btn btn-secondary" id="playAgainNewNames">Main Lagi (Ganti Nama)</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
+        // Inisialisasi partikel
         particlesJS("particles-js", {
             particles: {
                 number: { value: 40, density: { enable: true, value_area: 800 } },
@@ -722,10 +831,17 @@
                 }
             }
         });
+
+        // Variabel global
         let players = [];
         let currentPlayerIndex = 0;
-        let gameStarted = false;
         let cardFlipped = false;
+        let currentVote = null;
+        let eliminatedPlayers = [];
+        let gameRound = 1;
+        let playerNames = [];
+
+        // Fungsi notifikasi
         function showNotification(message) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
@@ -735,215 +851,150 @@
                 notification.style.animation = 'slideDown 0.3s ease, fadeOut 0.3s ease 2.7s forwards';
             }, 10);
         }
+
+        // Daftar clue dengan kata-kata sederhana dan mudah dipahami
         const clues = [
-            { civilian: "Gunung", undercover: "Gunung Berapi" },
-            { civilian: "Celana Dalam", undercover: "Kutang" },
-            { civilian: "Pohon", undercover: "Pohon Beringin" },
-            { civilian: "Laut", undercover: "Samudra" },
-            { civilian: "Matahari", undercover: "Bintang" },
-            { civilian: "Bulan", undercover: "Satelit" },
-            { civilian: "Buku", undercover: "Novel" },
-            { civilian: "Pena", undercover: "Pulpen" },
-            { civilian: "Meja", undercover: "Lemari" },
-            { civilian: "Kursi", undercover: "Sofa" },
-            { civilian: "Lampu", undercover: "Senter" },
-            { civilian: "Air", undercover: "Minuman" },
-            { civilian: "Api", undercover: "Kobaran" },
-            { civilian: "Angin", undercover: "Badai" },
-            { civilian: "Tanah", undercover: "Bumi" },
-            { civilian: "Mobil", undercover: "Truk" },
-            { civilian: "Motor", undercover: "Sepeda" },
+            { civilian: "Pensil", undercover: "Pulpen" },
+            { civilian: "Gelas", undercover: "Cangkir" },
+            { civilian: "Sepatu", undercover: "Sandal" },
+            { civilian: "Meja", undercover: "Kursi" },
+            { civilian: "Buku", undercover: "Majalah" },
+            { civilian: "Handphone", undercover: "Tablet" },
+            { civilian: "Televisi", undercover: "Monitor" },
+            { civilian: "Kucing", undercover: "Anjing" },
+            { civilian: "Apel", undercover: "Jeruk" },
+            { civilian: "Nasi", undercover: "Roti" },
+            { civilian: "Air", undercover: "Es" },
+            { civilian: "Api", undercover: "Asap" },
+            { civilian: "Matahari", undercover: "Bulan" },
+            { civilian: "Bintang", undercover: "Bulan" },
+            { civilian: "Laut", undercover: "Danau" },
+            { civilian: "Gunung", undercover: "Bukit" },
+            { civilian: "Hutan", undercover: "Kebun" },
+            { civilian: "Kota", undercover: "Desa" },
+            { civilian: "Mobil", undercover: "Motor" },
             { civilian: "Pesawat", undercover: "Helikopter" },
             { civilian: "Kapal", undercover: "Perahu" },
-            { civilian: "Kucing", undercover: "Harimau" },
-            { civilian: "Anjing", undercover: "Serigala" },
-            { civilian: "Burung", undercover: "Elang" },
-            { civilian: "Ikan", undercover: "Hiu" },
-            { civilian: "Bunga", undercover: "Mawar" },
-            { civilian: "Pohon", undercover: "Hutan" },
-            { civilian: "Rumah", undercover: "Istana" },
-            { civilian: "Sekolah", undercover: "Kampus" },
-            { civilian: "Kantor", undercover: "Gedung" },
-            { civilian: "Taman", undercover: "Hutan Kota" },
-            { civilian: "Pasar", undercover: "Mall" },
-            { civilian: "Toko", undercover: "Supermarket" },
-            { civilian: "Restoran", undercover: "Kafe" },
-            { civilian: "Hotel", undercover: "Villa" },
-            { civilian: "Pantai", undercover: "Pulau" },
-            { civilian: "Salju", undercover: "Es" },
-            { civilian: "Hujan", undercover: "Badai" },
-            { civilian: "Petir", undercover: "Kilat" },
-            { civilian: "Pelangi", undercover: "Cahaya" },
-            { civilian: "Awan", undercover: "Kabut" },
-            { civilian: "Batu", undercover: "Karang" },
-            { civilian: "Pasir", undercover: "Debu" },
-            { civilian: "Kayu", undercover: "Bambu" },
-            { civilian: "Besi", undercover: "Baja" },
-            { civilian: "Emas", undercover: "Perak" },
-            { civilian: "Uang", undercover: "Koin" },
-            { civilian: "Kartu", undercover: "Domino" },
-            { civilian: "Dadu", undercover: "Permainan" },
-            { civilian: "Bola", undercover: "Globe" },
-            { civilian: "Jam", undercover: "Arloji" },
-            { civilian: "Kalender", undercover: "Bulan" },
-            { civilian: "Telepon", undercover: "Smartphone" },
-            { civilian: "Televisi", undercover: "Monitor" },
-            { civilian: "Radio", undercover: "Speaker" },
-            { civilian: "Komputer", undercover: "Laptop" },
-            { civilian: "Internet", undercover: "WiFi" },
-            { civilian: "Email", undercover: "Pesan" },
-            { civilian: "Surat", undercover: "Kartu Pos" },
-            { civilian: "Foto", undercover: "Gambar" },
-            { civilian: "Video", undercover: "Film" },
-            { civilian: "Musik", undercover: "Lagu" },
-            { civilian: "Tarian", undercover: "Balet" },
-            { civilian: "Lukisan", undercover: "Grafiti" },
-            { civilian: "Patung", undercover: "Monumen" },
-            { civilian: "Bangunan", undercover: "Struktur" },
-            { civilian: "Jalan", undercover: "Jalur" },
-            { civilian: "Jembatan", undercover: "Terowongan" },
-            { civilian: "Terbang", undercover: "Melayang" },
-            { civilian: "Berenang", undercover: "Menyelam" },
-            { civilian: "Lari", undercover: "Jogging" },
-            { civilian: "Lompat", undercover: "Melompat" },
-            { civilian: "Tidur", undercover: "Beristirahat" },
-            { civilian: "Makan", undercover: "Menikmati" },
-            { civilian: "Minum", undercover: "Meneguk" },
-            { civilian: "Masak", undercover: "Memasak" },
-            { civilian: "Bersih", undercover: "Rapih" },
-            { civilian: "Kotor", undercover: "Berkabut" },
-            { civilian: "Panas", undercover: "Hangat" },
-            { civilian: "Dingin", undercover: "Beku" },
-            { civilian: "Tinggi", undercover: "Menjulang" },
-            { civilian: "Rendah", undercover: "Datar" },
-            { civilian: "Besar", undercover: "Raksasa" },
-            { civilian: "Kecil", undercover: "Mungil" },
-            { civilian: "Panjang", undercover: "Luas" },
-            { civilian: "Pendek", undercover: "Kecil" },
-            { civilian: "Lebar", undercover: "Besar" },
-            { civilian: "Sempit", undercover: "Kecil" },
-            { civilian: "Dalam", undercover: "Menukik" },
-            { civilian: "Dangkal", undercover: "Rendah" },
-            { civilian: "Berat", undercover: "Massif" },
-            { civilian: "Ringan", undercover: "Mudah" },
-            { civilian: "Cepat", undercover: "Kilat" },
-            { civilian: "Lambat", undercover: "Santai" },
-            { civilian: "Keras", undercover: "Kuat" },
-            { civilian: "Lembut", undercover: "Halus" },
-            { civilian: "Kuat", undercover: "Perkasa" },
-            { civilian: "Lemah", undercover: "Rapuh" },
-            { civilian: "Muda", undercover: "Anak-anak" },
-            { civilian: "Tua", undercover: "Lansia" },
-            { civilian: "Baru", undercover: "Modern" },
-            { civilian: "Lama", undercover: "Kuno" },
-            { civilian: "Mahal", undercover: "Mewah" },
-            { civilian: "Murah", undercover: "Terjangkau" },
-            { civilian: "Kaya", undercover: "Makmur" },
-            { civilian: "Miskin", undercover: "Sederhana" },
-            { civilian: "Senang", undercover: "Gembira" },
-            { civilian: "Sedih", undercover: "Pilu" },
-            { civilian: "Marah", undercover: "Kesal" },
-            { civilian: "Takut", undercover: "Cemas" },
-            { civilian: "Tenang", undercover: "Damai" },
-            { civilian: "Ribut", undercover: "Bising" },
-            { civilian: "Ramai", undercover: "Penuh" },
-            { civilian: "Sepi", undercover: "Sunyi" },
-            { civilian: "Terang", undercover: "Bercahaya" },
-            { civilian: "Gelap", undercover: "Kelam" },
-            { civilian: "Jelas", undercover: "Terang" },
-            { civilian: "Samar", undercover: "Kabur" },
-            { civilian: "Benar", undercover: "Tepat" },
-            { civilian: "Salah", undercover: "Keliru" },
-            { civilian: "Baik", undercover: "Mulia" },
-            { civilian: "Buruk", undercover: "Jahat" },
-            { civilian: "Indah", undercover: "Cantik" },
-            { civilian: "Jelek", undercover: "Buruk" },
-            { civilian: "Manis", undercover: "Lezat" },
-            { civilian: "Pahit", undercover: "Getir" },
-            { civilian: "Asin", undercover: "Gurih" },
-            { civilian: "Asam", undercover: "Kecut" },
-            { civilian: "Pedas", undercover: "Membakar" }
+            { civilian: "Sepeda", undercover: "Becak" },
+            { civilian: "Jam", undercover: "Stopwatch" },
+            { civilian: "Kalender", undercover: "Agenda" },
+            { civilian: "Kunci", undercover: "Gembok" },
+            { civilian: "Pintu", undercover: "Jendela" },
+            { civilian: "Lantai", undercover: "Dinding" },
+            { civilian: "Atap", undercover: "Plafon" },
+            { civilian: "Lampu", undercover: "Senter" },
+            { civilian: "Baterai", undercover: "Aki" },
+            { civilian: "Kabel", undercover: "Tali" },
+            { civilian: "Kipas", undercover: "AC" },
+            { civilian: "Kulkas", undercover: "Freezer" },
+            { civilian: "Kompor", undercover: "Oven" },
+            { civilian: "Panci", undercover: "Wajan" },
+            { civilian: "Piring", undercover: "Mangkuk" },
+            { civilian: "Sendok", undercover: "Garpu" },
+            { civilian: "Pisau", undercover: "Gunting" },
+            { civilian: "Sapu", undercover: "Kemoceng" },
+            { civilian: "Sikat", undercover: "Spons" },
+            { civilian: "Sabun", undercover: "Shampoo" },
+            { civilian: "Pasta Gigi", undercover: "Obat Kumur" },
+            { civilian: "Sikat Gigi", undercover: "Benang Gigi" },
+            { civilian: "Handuk", undercover: "Sapu Tangan" },
+            { civilian: "Bantal", undercover: "Guling" },
+            { civilian: "Selimut", undercover: "Karpet" },
+            { civilian: "Kasur", undercover: "Dipan" },
+            { civilian: "Lemari", undercover: "Rak" },
+            { civilian: "Laci", undercover: "Kotak" },
+            { civilian: "Tas", undercover: "Ransel" },
+            { civilian: "Dompet", undercover: "Kantong" },
+            { civilian: "Kacamata", undercover: "Lensa Kontak" },
+            { civilian: "Topi", undercover: "Helm" },
+            { civilian: "Jaket", undercover: "Sweater" },
+            { civilian: "Kaos", undercover: "Kemeja" },
+            { civilian: "Celana", undercover: "Rok" },
+            { civilian: "Sepatu", undercover: "Sendal" },
+            { civilian: "Kaus Kaki", undercover: "Stocking" },
+            { civilian: "Sarung Tangan", undercover: "Bracelet" },
+            { civilian: "Kalung", undercover: "Gelang" },
+            { civilian: "Cincin", undercover: "Anting" }
         ];
+
+        // Fungsi untuk berpindah halaman
         function goToPage(pageNumber) {
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
             document.getElementById(`page${pageNumber}`).classList.add('active');
         }
-        function generatePlayerInputs() {
-            const playerCount = parseInt(document.getElementById('playerCount').value);
-            const playerNamesDiv = document.getElementById('playerNames');
-            playerNamesDiv.innerHTML = '';
-            
-            for (let i = 0; i < playerCount; i++) {
-                const inputGroup = document.createElement('div');
-                inputGroup.className = 'input-group';
-                
-                const label = document.createElement('label');
-                label.textContent = `Nama Pemain ${i + 1}:`;
-                
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = `player${i}`;
-                input.placeholder = `Masukkan nama pemain ${i + 1}`;
-                
-                inputGroup.appendChild(label);
-                inputGroup.appendChild(input);
-                playerNamesDiv.appendChild(inputGroup);
-            }
-        }
+
+        // Fungsi untuk memulai setup game
         function startGameSetup() {
             const playerCount = parseInt(document.getElementById('playerCount').value);
-            const mrWhiteCount = parseInt(document.getElementById('mrWhiteCount').value);
             const undercoverCount = parseInt(document.getElementById('undercoverCount').value);
+            const mrWhiteCount = parseInt(document.getElementById('mrWhiteCount').value);
+            
             if (playerCount < 3 || playerCount > 10) {
                 showNotification('Jumlah pemain harus antara 3 dan 10!');
                 return;
             }
-            if (mrWhiteCount + undercoverCount >= playerCount) {
-                showNotification('Jumlah Mr. White dan Undercover terlalu banyak! Harus ada setidaknya 1 Civilian.');
+            
+            if (undercoverCount + mrWhiteCount >= playerCount) {
+                showNotification('Jumlah Undercover dan Mr. White terlalu banyak! Harus ada setidaknya 2 Civilian.');
                 return;
             }
+            
+            // Inisialisasi pemain dengan nama kosong
             players = [];
             for (let i = 0; i < playerCount; i++) {
-                const nameInput = document.getElementById(`player${i}`);
-                if (!nameInput.value.trim()) {
-                    showNotification(`Nama pemain ${i + 1} tidak boleh kosong!`);
-                    return;
-                }
                 players.push({
-                    name: nameInput.value.trim(),
+                    name: '', // Nama kosong
                     role: '',
                     clue: '',
-                    hasSeenCard: false
+                    hasSeenNameCard: false,
+                    hasSeenClueCard: false,
+                    eliminated: false,
+                    votes: 0
                 });
             }
-            shuffleArray(players);
-            assignRoles(mrWhiteCount, undercoverCount);
-            determineFirstPlayer();
+            
+            // Reset variabel game
             currentPlayerIndex = 0;
             cardFlipped = false;
-            updateRoleDisplay();
-            goToPage(3);
+            eliminatedPlayers = [];
+            gameRound = 1;
+            
+            // Update tampilan kartu nama
+            updateNameCardDisplay();
+            goToPage(2);
         }
+
+        // Fungsi untuk mengacak array
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
         }
-        function assignRoles(mrWhiteCount, undercoverCount) {
+
+        // Fungsi untuk menetapkan peran
+        function assignRoles(undercoverCount, mrWhiteCount) {
             const roles = [];
+            
+            // Tambahkan Mr. White
             for (let i = 0; i < mrWhiteCount; i++) {
                 roles.push('Mr. White');
             }
+            
+            // Tambahkan Undercover
             for (let i = 0; i < undercoverCount; i++) {
                 roles.push('Undercover');
             }
+            
+            // Isi sisanya dengan Civilian
             while (roles.length < players.length) {
                 roles.push('Civilian');
             }
+            
             shuffleArray(roles);
+            
             const clueIndex = Math.floor(Math.random() * clues.length);
             const selectedClue = clues[clueIndex];
             
@@ -954,156 +1005,408 @@
                     players[i].clue = selectedClue.civilian;
                 } else if (roles[i] === 'Undercover') {
                     players[i].clue = selectedClue.undercover;
-                } else { 
+                } else { // Mr. White
                     players[i].clue = 'Tidak ada clue - Anda harus menebak!';
                 }
             }
-        }
-        function determineFirstPlayer() {
-            for (let i = 0; i < players.length; i++) {
-                if (players[i].role !== 'Mr. White') {
-                    const firstPlayer = players.splice(i, 1)[0];
-                    players.unshift(firstPlayer);
-                    break;
-                }
+            
+            // Pastikan Mr. White tidak di posisi pertama
+            let mrWhiteIndex = players.findIndex(player => player.role === 'Mr. White');
+            if (mrWhiteIndex === 0 && players.length > 1) {
+                // Tukar posisi Mr. White dengan pemain lain
+                const randomIndex = Math.floor(Math.random() * (players.length - 1)) + 1;
+                [players[0], players[randomIndex]] = [players[randomIndex], players[0]];
             }
         }
-        function updateRoleDisplay() {
+
+        // Fungsi untuk memperbarui tampilan kartu nama
+        function updateNameCardDisplay() {
             const currentPlayer = players[currentPlayerIndex];
-            const card = document.getElementById('roleCard');
+            
+            document.getElementById('currentPlayerTurn').textContent = `Pemain ${currentPlayerIndex + 1}`;
+            document.getElementById('playerNumber').textContent = currentPlayerIndex + 1;
+            document.getElementById('playerNameInput').value = currentPlayer.name || '';
+            
+            // Perbaikan: Tampilkan tombol yang benar berdasarkan posisi pemain
+            if (currentPlayerIndex === players.length - 1) {
+                document.getElementById('nextToPage3').style.display = 'block';
+                document.getElementById('nextPlayerName').style.display = 'none';
+            } else {
+                document.getElementById('nextToPage3').style.display = 'none';
+                document.getElementById('nextPlayerName').style.display = 'block';
+            }
+        }
+
+        // Fungsi untuk menampilkan daftar nama pemain di halaman konfirmasi
+        function updatePlayerList() {
+            const playerListDiv = document.getElementById('playerList');
+            playerListDiv.innerHTML = '';
+            
+            players.forEach((player, index) => {
+                const playerDiv = document.createElement('div');
+                playerDiv.className = 'lobby-player';
+                playerDiv.textContent = `${index + 1}. ${player.name || '(Belum diisi)'}`;
+                playerListDiv.appendChild(playerDiv);
+            });
+        }
+
+        // Fungsi untuk memperbarui tampilan clue
+        function updateClueDisplay() {
+            const currentPlayer = players[currentPlayerIndex];
+            const card = document.getElementById('clueCard');
             card.classList.remove('flipped');
             cardFlipped = false;
-            document.getElementById('currentPlayerTurn').textContent = `Giliran: ${currentPlayer.name}`;
-            document.getElementById('cardPlayerName').textContent = currentPlayer.name;
-            document.getElementById('cardRole').textContent = currentPlayer.role;
-            document.getElementById('cardClue').textContent = currentPlayer.clue;
-            currentPlayer.hasSeenCard = true;
-            document.getElementById('nextPlayerRole').disabled = true;
+            
+            document.getElementById('currentPlayerClueTurn').textContent = `Giliran: ${currentPlayer.name}`;
+            document.getElementById('clueCardPlayerName').textContent = currentPlayer.name;
+            document.getElementById('backClueCardPlayerName').textContent = currentPlayer.name;
+            document.getElementById('clueCardClue').textContent = currentPlayer.clue;
+            
+            currentPlayer.hasSeenClueCard = true;
+            document.getElementById('nextPlayerClue').disabled = true;
+            
             if (currentPlayerIndex === players.length - 1) {
-                document.getElementById('nextToPage4').style.display = 'block';
-                document.getElementById('nextPlayerRole').style.display = 'none';
+                document.getElementById('nextToPage5').style.display = 'block';
+                document.getElementById('nextPlayerClue').style.display = 'none';
             } else {
-                document.getElementById('nextToPage4').style.display = 'none';
-                document.getElementById('nextPlayerRole').style.display = 'block';
+                document.getElementById('nextToPage5').style.display = 'none';
+                document.getElementById('nextPlayerClue').style.display = 'block';
             }
         }
+
+        // Fungsi untuk memperbarui tampilan lobby
         function updateLobbyDisplay() {
             const lobbyPlayersDiv = document.getElementById('lobbyPlayers');
             lobbyPlayersDiv.innerHTML = '';
             
             players.forEach((player, index) => {
                 const playerDiv = document.createElement('div');
-                playerDiv.className = `lobby-player ${index === 0 ? 'active' : ''}`;
-                playerDiv.textContent = player.name;
+                playerDiv.className = `lobby-player ${player.eliminated ? 'eliminated' : ''}`;
+                playerDiv.textContent = player.eliminated ? `${player.name} (Eliminasi)` : player.name;
                 lobbyPlayersDiv.appendChild(playerDiv);
             });
-            document.getElementById('firstPlayerName').textContent = players[0].name;
-        }
-        function updateGameDisplay() {
-            const currentPlayer = players[currentPlayerIndex];
-            const card = document.getElementById('gameCard');
-            card.classList.remove('flipped');
-            cardFlipped = false;
-            document.getElementById('gameCurrentPlayer').textContent = `Giliran: ${currentPlayer.name}`;
-            const playersList = document.getElementById('gamePlayersList');
-            playersList.innerHTML = '';
             
-            players.forEach((player, index) => {
-                const playerItem = document.createElement('div');
-                playerItem.className = `player-item ${index === currentPlayerIndex ? 'active' : ''}`;
-                playerItem.textContent = player.name;
-                playersList.appendChild(playerItem);
-            });
-            document.getElementById('gameCardPlayerName').textContent = currentPlayer.name;
-            document.getElementById('gameCardRole').textContent = currentPlayer.role;
-            document.getElementById('gameCardClue').textContent = currentPlayer.clue;
-            document.getElementById('nextGamePlayer').disabled = true;
-            document.getElementById('prevGamePlayer').disabled = true;
-            document.getElementById('prevGamePlayer').style.display = currentPlayerIndex === 0 ? 'none' : 'block';
+            // Update status game
+            document.getElementById('gameStatus').textContent = `ROUND ${gameRound}`;
+            
+            // Setup voting
+            setupVoting();
         }
+
+        // Fungsi untuk setup voting
+        function setupVoting() {
+            const votingOptionsDiv = document.getElementById('votingOptions');
+            votingOptionsDiv.innerHTML = '';
+            currentVote = null;
+            
+            // Hanya pemain yang belum tereliminasi yang bisa divoting
+            const activePlayers = players.filter(player => !player.eliminated);
+            
+            activePlayers.forEach((player, index) => {
+                const voteBtn = document.createElement('button');
+                voteBtn.className = 'vote-btn';
+                voteBtn.textContent = player.name;
+                voteBtn.addEventListener('click', function() {
+                    // Reset semua tombol voting
+                    document.querySelectorAll('.vote-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    
+                    // Tandai tombol yang dipilih
+                    voteBtn.classList.add('selected');
+                    currentVote = player.name;
+                    document.getElementById('submitVote').disabled = false;
+                });
+                
+                votingOptionsDiv.appendChild(voteBtn);
+            });
+            
+            document.getElementById('submitVote').disabled = true;
+            document.getElementById('votingSection').style.display = 'block';
+            document.getElementById('mrWhiteGuess').style.display = 'none';
+        }
+
+        // Fungsi untuk submit voting
+        function submitVote() {
+            if (!currentVote) {
+                showNotification('Pilih pemain terlebih dahulu!');
+                return;
+            }
+            
+            const votedPlayer = players.find(player => player.name === currentVote);
+            
+            if (votedPlayer.role === 'Mr. White') {
+                // Tampilkan input untuk Mr. White menebak clue
+                document.getElementById('votingSection').style.display = 'none';
+                document.getElementById('mrWhiteGuess').style.display = 'block';
+                document.getElementById('mrWhiteGuessInput').value = '';
+            } else {
+                // Tampilkan role pemain yang terpilih
+                showNotification(`Pemain ${votedPlayer.name} adalah ${votedPlayer.role}!`);
+                
+                if (votedPlayer.role === 'Undercover') {
+                    // Undercover tereliminasi
+                    processElimination(votedPlayer);
+                } else {
+                    // Civilian tereliminasi
+                    processElimination(votedPlayer);
+                }
+            }
+        }
+
+        // Fungsi untuk Mr. White menebak clue
+        function submitMrWhiteGuess() {
+            const guess = document.getElementById('mrWhiteGuessInput').value.trim();
+            if (!guess) {
+                showNotification('Masukkan tebakan terlebih dahulu!');
+                return;
+            }
+            
+            const votedPlayer = players.find(player => player.name === currentVote);
+            const civilianPlayer = players.find(player => player.role === 'Civilian' && !player.eliminated);
+            
+            if (!civilianPlayer) {
+                showNotification('Tidak ada Civilian yang tersisa!');
+                return;
+            }
+            
+            const civilianClue = civilianPlayer.clue;
+            
+            if (guess.toLowerCase() === civilianClue.toLowerCase()) {
+                // Mr. White menang
+                showNotification(`Mr. White (${votedPlayer.name}) berhasil menebak clue "${civilianClue}"! Mr. White menang!`);
+                endGame('Mr. White');
+            } else {
+                // Mr. White salah menebak, eliminasi
+                showNotification(`Mr. White (${votedPlayer.name}) salah menebak. Tebakan: "${guess}", Clue yang benar: "${civilianClue}". Mr. White tereliminasi.`);
+                processElimination(votedPlayer);
+            }
+        }
+
+        // Fungsi untuk memproses eliminasi
+        function processElimination(player) {
+            player.eliminated = true;
+            eliminatedPlayers.push(player.name);
+            
+            // Periksa kondisi kemenangan
+            checkWinCondition();
+        }
+
+        // Fungsi untuk memeriksa kondisi kemenangan
+        function checkWinCondition() {
+            const activePlayers = players.filter(player => !player.eliminated);
+            const activeCivilians = activePlayers.filter(player => player.role === 'Civilian').length;
+            const activeUndercover = activePlayers.filter(player => player.role === 'Undercover').length;
+            const activeMrWhite = activePlayers.filter(player => player.role === 'Mr. White').length;
+            
+            // Kondisi kemenangan
+            if (activeUndercover === 0 && activeMrWhite === 0) {
+                // Tidak ada Undercover atau Mr. White yang tersisa, Civilian menang
+                endGame('Civilian');
+            } else if (activeUndercover >= activeCivilians + activeMrWhite) {
+                // Undercover lebih banyak atau sama dengan Civilian + Mr. White, Undercover menang
+                endGame('Undercover');
+            } else {
+                // Lanjutkan permainan
+                gameRound++;
+                updateLobbyDisplay();
+            }
+        }
+
+        // Fungsi untuk mengakhiri permainan
+        function endGame(winner) {
+            let message = '';
+            let winnerText = '';
+            
+            switch(winner) {
+                case 'Civilian':
+                    message = 'Civilian menang! Semua Undercover dan Mr. White telah tereliminasi.';
+                    winnerText = 'Civilian Menang!';
+                    break;
+                case 'Undercover':
+                    message = 'Undercover menang! Jumlah Undercover lebih banyak atau sama dengan Civilian.';
+                    winnerText = 'Undercover Menang!';
+                    break;
+                case 'Mr. White':
+                    message = 'Mr. White menang! Berhasil menebak clue yang benar.';
+                    winnerText = 'Mr. White Menang!';
+                    break;
+            }
+            
+            // Tampilkan hasil permainan
+            document.getElementById('winnerAnnouncement').textContent = winnerText;
+            
+            const gameResultsDiv = document.getElementById('gameResults');
+            gameResultsDiv.innerHTML = `
+                <p>${message}</p>
+                <p><strong>Pemain yang tereliminasi:</strong> ${eliminatedPlayers.join(', ') || 'Tidak ada'}</p>
+                <p><strong>Detail peran:</strong></p>
+                <ul>
+                    ${players.map(player => `
+                        <li>${player.name}: ${player.role} - Clue: ${player.clue}</li>
+                    `).join('')}
+                </ul>
+            `;
+            
+            showNotification(message);
+            goToPage(6);
+        }
+
+        // Fungsi untuk membalik kartu clue
         function flipCard(cardId) {
             const card = document.getElementById(cardId);
             cardFlipped = !cardFlipped;
             card.classList.toggle('flipped');
-            if (cardId === 'roleCard' && cardFlipped) {
-                document.getElementById('nextPlayerRole').disabled = false;
-            } else if (cardId === 'gameCard' && cardFlipped) {
-                document.getElementById('nextGamePlayer').disabled = false;
-                if (currentPlayerIndex > 0) {
-                    document.getElementById('prevGamePlayer').disabled = false;
-                }
+            
+            if (cardId === 'clueCard' && cardFlipped) {
+                document.getElementById('nextPlayerClue').disabled = false;
             }
         }
-        function nextPlayerRole() {
+
+        // PERBAIKAN: Fungsi untuk pemain berikutnya (kartu nama) - Diperbaiki untuk menangani pemain terakhir dengan benar
+        function nextPlayerName() {
+            const nameInput = document.getElementById('playerNameInput').value.trim();
+            
+            if (!nameInput) {
+                showNotification('Masukkan nama terlebih dahulu!');
+                return;
+            }
+            
+            // Cek apakah nama sudah ada
+            if (players.some(player => player.name === nameInput)) {
+                showNotification('Nama sudah digunakan! Gunakan nama lain.');
+                return;
+            }
+            
+            // Simpan nama pemain saat ini
+            players[currentPlayerIndex].name = nameInput;
+            
+            // PERBAIKAN: Simpan nama pemain terakhir sebelum pindah ke halaman konfirmasi
+            if (currentPlayerIndex === players.length - 1) {
+                // Pemain terakhir - langsung pindah ke halaman konfirmasi
+                updatePlayerList();
+                goToPage(3);
+            } else {
+                // Lanjut ke pemain berikutnya
+                currentPlayerIndex++;
+                updateNameCardDisplay();
+            }
+        }
+
+        // Fungsi untuk pemain berikutnya (clue)
+        function nextPlayerClue() {
             if (!cardFlipped) {
                 showNotification('Pemain harus membuka kartunya terlebih dahulu!');
                 return;
             }
             
             currentPlayerIndex++;
-            updateRoleDisplay();
-        }
-        function nextGamePlayer() {
-            if (!cardFlipped) {
-                showNotification('Pemain harus membuka kartunya terlebih dahulu!');
-                return;
+            if (currentPlayerIndex < players.length) {
+                updateClueDisplay();
+            } else {
+                // Semua pemain sudah melihat clue
+                document.getElementById('nextToPage5').style.display = 'block';
+                document.getElementById('nextPlayerClue').style.display = 'none';
             }
+        }
+
+        // Fungsi untuk main lagi dengan nama yang sama
+        function playAgainSameNames() {
+            // Reset semua status pemain
+            players.forEach(player => {
+                player.hasSeenNameCard = false;
+                player.hasSeenClueCard = false;
+                player.eliminated = false;
+                player.votes = 0;
+            });
             
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-            updateGameDisplay();
-        }
-        function prevGamePlayer() {
-            if (!cardFlipped) {
-                showNotification('Pemain harus membuka kartunya terlebih dahulu!');
-                return;
-            }
+            // Acak urutan pemain
+            shuffleArray(players);
             
-            currentPlayerIndex = (currentPlayerIndex - 1 + players.length) % players.length;
-            updateGameDisplay();
+            // Tentukan peran baru
+            const undercoverCount = parseInt(document.getElementById('undercoverCount').value);
+            const mrWhiteCount = parseInt(document.getElementById('mrWhiteCount').value);
+            assignRoles(undercoverCount, mrWhiteCount);
+            
+            // Reset variabel game
+            currentPlayerIndex = 0;
+            cardFlipped = false;
+            eliminatedPlayers = [];
+            gameRound = 1;
+            
+            // Kembali ke halaman clue (karena nama sudah ada)
+            updateClueDisplay();
+            goToPage(4);
         }
-        function endGame() {
-            if (confirm('Apakah Anda yakin ingin mengakhiri permainan?')) {
-                goToPage(1);
-                gameStarted = false;
-            }
-        }
-        document.getElementById('playerCount').addEventListener('change', generatePlayerInputs);
-        document.getElementById('nextToPage2').addEventListener('click', function() {
-            generatePlayerInputs();
+
+        // Fungsi untuk main lagi dengan nama baru
+        function playAgainNewNames() {
+            // Reset index untuk nama
+            currentPlayerIndex = 0;
+            updateNameCardDisplay();
+            
+            // Kembali ke halaman input nama
             goToPage(2);
-        });
+        }
+
+        // Event listeners
+        document.getElementById('nextToPage2').addEventListener('click', startGameSetup);
         document.getElementById('backToPage1').addEventListener('click', function() {
             goToPage(1);
         });
-        document.getElementById('nextToPage3').addEventListener('click', startGameSetup);
+        document.getElementById('nextPlayerName').addEventListener('click', nextPlayerName);
+        
+        // PERBAIKAN: Pastikan nama pemain terakhir tersimpan sebelum pindah halaman
+        document.getElementById('nextToPage3').addEventListener('click', function() {
+            const nameInput = document.getElementById('playerNameInput').value.trim();
+            if (nameInput && !players.some(player => player.name === nameInput)) {
+                players[currentPlayerIndex].name = nameInput;
+            }
+            
+            // Tampilkan daftar nama untuk konfirmasi
+            updatePlayerList();
+            goToPage(3);
+        });
+        
         document.getElementById('backToPage2').addEventListener('click', function() {
+            // Kembali ke halaman input nama
+            currentPlayerIndex = 0;
+            updateNameCardDisplay();
             goToPage(2);
         });
-        document.getElementById('nextPlayerRole').addEventListener('click', nextPlayerRole);
         document.getElementById('nextToPage4').addEventListener('click', function() {
-            updateLobbyDisplay();
+            // Tentukan peran setelah konfirmasi nama
+            const undercoverCount = parseInt(document.getElementById('undercoverCount').value);
+            const mrWhiteCount = parseInt(document.getElementById('mrWhiteCount').value);
+            assignRoles(undercoverCount, mrWhiteCount);
+            
+            // Reset index untuk clue
+            currentPlayerIndex = 0;
+            cardFlipped = false;
+            updateClueDisplay();
             goToPage(4);
         });
         document.getElementById('backToPage3').addEventListener('click', function() {
             goToPage(3);
         });
-        document.getElementById('startGame').addEventListener('click', function() {
-            currentPlayerIndex = 0;
-            updateGameDisplay();
+        document.getElementById('nextPlayerClue').addEventListener('click', nextPlayerClue);
+        document.getElementById('nextToPage5').addEventListener('click', function() {
+            updateLobbyDisplay();
             goToPage(5);
-            gameStarted = true;
         });
-        document.getElementById('nextGamePlayer').addEventListener('click', nextGamePlayer);
-        document.getElementById('prevGamePlayer').addEventListener('click', prevGamePlayer);
-        document.getElementById('endGame').addEventListener('click', endGame);
-        document.getElementById('roleCard').addEventListener('click', function() {
-            flipCard('roleCard');
+        document.getElementById('backToPage4').addEventListener('click', function() {
+            goToPage(4);
         });
-        document.getElementById('gameCard').addEventListener('click', function() {
-            flipCard('gameCard');
+        document.getElementById('submitVote').addEventListener('click', submitVote);
+        document.getElementById('submitMrWhiteGuess').addEventListener('click', submitMrWhiteGuess);
+        document.getElementById('clueCard').addEventListener('click', function() {
+            flipCard('clueCard');
         });
+        document.getElementById('playAgainSameNames').addEventListener('click', playAgainSameNames);
+        document.getElementById('playAgainNewNames').addEventListener('click', playAgainNewNames);
+
+        // Inisialisasi
         window.addEventListener('DOMContentLoaded', function() {
-            generatePlayerInputs();
             goToPage(1);
         });
     </script>
