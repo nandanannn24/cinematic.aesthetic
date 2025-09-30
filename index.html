@@ -624,6 +624,10 @@
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
                 </select>
             </div>
             
@@ -1355,32 +1359,24 @@
             goToPage(1);
         });
         document.getElementById('nextPlayerName').addEventListener('click', nextPlayerName);
-        
-        // PERBAIKAN: Pastikan nama pemain terakhir tersimpan sebelum pindah halaman
         document.getElementById('nextToPage3').addEventListener('click', function() {
             const nameInput = document.getElementById('playerNameInput').value.trim();
             if (nameInput && !players.some(player => player.name === nameInput)) {
                 players[currentPlayerIndex].name = nameInput;
             }
-            
-            // Tampilkan daftar nama untuk konfirmasi
             updatePlayerList();
             goToPage(3);
         });
         
         document.getElementById('backToPage2').addEventListener('click', function() {
-            // Kembali ke halaman input nama
             currentPlayerIndex = 0;
             updateNameCardDisplay();
             goToPage(2);
         });
         document.getElementById('nextToPage4').addEventListener('click', function() {
-            // Tentukan peran setelah konfirmasi nama
             const undercoverCount = parseInt(document.getElementById('undercoverCount').value);
             const mrWhiteCount = parseInt(document.getElementById('mrWhiteCount').value);
             assignRoles(undercoverCount, mrWhiteCount);
-            
-            // Reset index untuk clue
             currentPlayerIndex = 0;
             cardFlipped = false;
             updateClueDisplay();
@@ -1404,8 +1400,6 @@
         });
         document.getElementById('playAgainSameNames').addEventListener('click', playAgainSameNames);
         document.getElementById('playAgainNewNames').addEventListener('click', playAgainNewNames);
-
-        // Inisialisasi
         window.addEventListener('DOMContentLoaded', function() {
             goToPage(1);
         });
